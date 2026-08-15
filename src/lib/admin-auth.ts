@@ -1,25 +1,26 @@
 import "server-only";
 
 import { redirect } from "next/navigation";
-import { createClient, createOptionalClient } from "@/lib/supabase/server";
+import { createClient } from "@/lib/supabase/server";
+import { hasPublicSupabaseConfig } from "@/lib/supabase/config";
 
 export async function getOwnerState() {
-  const supabase = await createOptionalClient();
-  if (!supabase) return { demo: true as const, user: null };
+  if (!hasPublicSupabaseConfig()) return { configured: false as const, user: null };
+  const supabase = await createClient();
 
   const { data: authData } = await supabase.auth.getUser();
   const user = authData.user;
-  if (!user) return { demo: false as const, user: null };
+  if (!user) return { configured: true as const, user: null };
 
   const { data: profile } = await supabase.from("profiles").select("role, full_name").eq("id", user.id).maybeSingle();
-  if (!profile || profile.role !== "owner") return { demo: false as const, user: null };
+  if (!profile || profile.role !== "owner") return { configured: true as const, user: null };
 
-  return { demo: false as const, user, profile };
+  return { configured: true as const, user, profile };
 }
 
 export async function requireOwner() {
-  const supabase = await createOptionalClient();
-  if (!supabase) throw new Error("Connect Supabase to enable admin mutations.");
+  if (!hasPublicSupabaseConfig()) redirect("/admin/login?error=Supabase%20configuration%20is%20missing");
+  const supabase = await createClient();
 
   const { data } = await supabase.auth.getUser();
   if (!data.user) redirect("/admin/login");
@@ -32,4 +33,3 @@ export async function requireOwner() {
 export async function createLoginClient() {
   return createClient();
 }
-

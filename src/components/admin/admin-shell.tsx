@@ -1,6 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
-import { CircleDollarSign, LayoutDashboard, LogOut, UsersRound, UserRoundPlus } from "lucide-react";
+import { CircleDollarSign, Images, LayoutDashboard, LogOut, UsersRound, UserRoundPlus } from "lucide-react";
 import { logoutAction } from "@/app/admin/actions";
 
 const links = [
@@ -8,9 +8,10 @@ const links = [
   { href: "/admin/leads", label: "Leads", icon: UserRoundPlus },
   { href: "/admin/customers", label: "Customers", icon: UsersRound },
   { href: "/admin/finances", label: "Finances", icon: CircleDollarSign },
+  { href: "/admin/shipments", label: "Shipped products", icon: Images },
 ];
 
-export function AdminShell({ children, demo }: { children: React.ReactNode; demo: boolean }) {
+export function AdminShell({ children }: { children: React.ReactNode }) {
   return (
     <div className="admin-shell">
       <aside className="admin-sidebar">
@@ -25,22 +26,12 @@ export function AdminShell({ children, demo }: { children: React.ReactNode; demo
         </nav>
         <div className="admin-sidebar-foot">
           <Link href="/" target="_blank">View public site</Link>
-          {!demo ? (
-            <form action={logoutAction}>
-              <button type="submit"><LogOut size={17} aria-hidden="true" /> Sign out</button>
-            </form>
-          ) : null}
+          <form action={logoutAction}>
+            <button type="submit"><LogOut size={17} aria-hidden="true" /> Sign out</button>
+          </form>
         </div>
       </aside>
-      <div className="admin-workspace">
-        {demo ? (
-          <div className="demo-banner" role="status">
-            <strong>Preview data.</strong> Connect the supplied Supabase schema and environment variables to enable secure sign-in and live records.
-          </div>
-        ) : null}
-        {children}
-      </div>
+      <div className="admin-workspace">{children}</div>
     </div>
   );
 }
-

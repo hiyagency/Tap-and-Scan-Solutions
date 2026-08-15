@@ -1,5 +1,6 @@
 "use server";
 
+import { randomUUID } from "node:crypto";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { requireOwner, createLoginClient } from "@/lib/admin-auth";
@@ -227,4 +228,64 @@ export async function recordPaymentAction(formData: FormData) {
   revalidatePath("/admin");
   revalidatePath("/admin/finances");
   redirect("/admin/finances?message=Payment%20recorded%20and%20cash%20flow%20updated");
+}
+
+const allowedShipmentTypes = new Map([
+  ["image/jpeg", "jpg"], ["image/png", "png"], ["image/webp", "webp"], ["image/avif", "avif"],
+]);
+
+export async function createShipmentAction(formData: FormData) {
+  const supabase = await requireOwner();
+  const image = formData.get("image");
+  if (!(image instanceof File) || image.size === 0) mutationError("/admin/shipments", "Choose a product photo.");
+  const extension = allowedShipmentTypes.get(image.type);
+  if (!extension) mutationError("/admin/shipments", "Upload a JPG, PNG, WebP or AVIF image.");
+  if (image.size > 10 * 1024 * 1024) mutationError("/admin/shipments", "Image must be 10 MB or smaller.");
+
+  const title = textValue(formData, "title");
+  const altText = textValue(formData, "alt_text");
+  if (title.length < 2 || altText.length < 5) mutationError("/admin/shipments", "Add a clear title and image description.");
+  const imagePath = `${new Date().toISOString().slice(0, 10)}/${randomUUID()}.${extension}`;
+  const { error: uploadError } = await supabase.storage.from("shipments").upload(imagePath, image, { contentType: image.type, upsert: false });
+  if (uploadError) mutationError("/admin/shipments", uploadError.message);
+
+  const { error: insertError } = await supabase.from("shipments").insert({
+    title,
+    business_name: optionalText(formData, "business_name"),
+    city: optionalText(formData, "city"),
+    caption: optionalText(formData, "caption"),
+    alt_text: altText,
+    image_path: imagePath,
+    shipped_on: textValue(formData, "shipped_on") || new Date().toISOString().slice(0, 10),
+    published: formData.get("published") === "on",
+  });
+  if (insertError) {
+    await supabase.storage.from("shipments").remove([imagePath]);
+    mutationError("/admin/shipments", insertError.message);
+  }
+  revalidatePath("/");
+  revalidatePath("/admin/shipments");
+  redirect("/admin/shipments?message=Shipment%20published");
+}
+
+export async function updateShipmentAction(formData: FormData) {
+  const supabase = await requireOwner();
+  const id = textValue(formData, "id");
+  const { error } = await supabase.from("shipments").update({ published: formData.get("published") === "on" }).eq("id", id);
+  if (error) mutationError("/admin/shipments", error.message);
+  revalidatePath("/");
+  revalidatePath("/admin/shipments");
+}
+
+export async function deleteShipmentAction(formData: FormData) {
+  const supabase = await requireOwner();
+  const id = textValue(formData, "id");
+  const { data, error: readError } = await supabase.from("shipments").select("image_path").eq("id", id).single();
+  if (readError || !data) mutationError("/admin/shipments", readError?.message ?? "Shipment not found.");
+  const { error: deleteError } = await supabase.from("shipments").delete().eq("id", id);
+  if (deleteError) mutationError("/admin/shipments", deleteError.message);
+  await supabase.storage.from("shipments").remove([data.image_path]);
+  revalidatePath("/");
+  revalidatePath("/admin/shipments");
+  redirect("/admin/shipments?message=Shipment%20removed");
 }

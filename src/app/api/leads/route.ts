@@ -26,7 +26,7 @@ export async function POST(request: Request) {
   const id = randomUUID();
   const admin = createAdminClient();
   if (!admin) {
-    return NextResponse.json({ ok: true, leadId: referenceFromId(id), persisted: false }, { status: 202 });
+    return NextResponse.json({ error: "Enquiry storage is not configured. Please call or WhatsApp us." }, { status: 503 });
   }
 
   const forwardedFor = request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ?? "unknown";
@@ -64,4 +64,3 @@ export async function POST(request: Request) {
   if (error) return NextResponse.json({ error: "We could not save your enquiry. Please call or WhatsApp us." }, { status: 503 });
   return NextResponse.json({ ok: true, leadId: referenceFromId(id), persisted: true }, { status: 201 });
 }
-

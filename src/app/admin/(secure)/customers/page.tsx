@@ -24,27 +24,27 @@ export default async function CustomersPage({ searchParams }: CustomersPageProps
         <details className="admin-create-panel">
           <summary><Plus size={17} /> Add a customer</summary>
           <form action={createCustomerAction} className="admin-form admin-form-grid">
-            <label>Name<input name="name" required disabled={data.demo} /></label>
-            <label>Business<input name="business_name" required disabled={data.demo} /></label>
-            <label>Phone<input name="phone" inputMode="tel" required disabled={data.demo} /></label>
-            <label>Email<input name="email" type="email" disabled={data.demo} /></label>
-            <label>City<input name="city" disabled={data.demo} /></label>
-            <label>Onboarding date<input name="onboarding_date" type="date" defaultValue={new Date().toISOString().slice(0, 10)} disabled={data.demo} /></label>
-            <label className="full-admin-field">Notes<textarea name="notes" rows={3} disabled={data.demo} /></label>
-            <button className="button button-dark" type="submit" disabled={data.demo}>Add customer <ArrowRight size={16} /></button>
+            <label>Name<input name="name" required /></label>
+            <label>Business<input name="business_name" required /></label>
+            <label>Phone<input name="phone" inputMode="tel" required /></label>
+            <label>Email<input name="email" type="email" /></label>
+            <label>City<input name="city" /></label>
+            <label>Onboarding date<input name="onboarding_date" type="date" defaultValue={new Date().toISOString().slice(0, 10)} /></label>
+            <label className="full-admin-field">Notes<textarea name="notes" rows={3} /></label>
+            <button className="button button-dark" type="submit">Add customer <ArrowRight size={16} /></button>
           </form>
         </details>
 
         <details className="admin-create-panel">
           <summary><Plus size={17} /> Attach a service</summary>
           <form action={createServiceAction} className="admin-form admin-form-grid">
-            <label className="full-admin-field">Customer<select name="customer_id" required disabled={data.demo}><option value="">Choose customer</option>{data.customers.filter((customer) => customer.status !== "archived").map((customer) => <option key={customer.id} value={customer.id}>{customer.business_name} — {customer.name}</option>)}</select></label>
-            <label className="full-admin-field">Service<input name="service_name" placeholder="e.g. U2L.AI scan analytics" required disabled={data.demo} /></label>
-            <label>Billing model<select name="billing_model" defaultValue="one_time" disabled={data.demo}><option value="one_time">One-time</option><option value="monthly">Monthly</option></select></label>
-            <label>Agreed amount (₹)<input name="amount" type="number" min="0.01" step="0.01" required disabled={data.demo} /></label>
-            <label>Renewal date<input name="renewal_date" type="date" disabled={data.demo} /></label>
-            <label>Notes<input name="notes" disabled={data.demo} /></label>
-            <button className="button button-dark" type="submit" disabled={data.demo}>Attach service <ArrowRight size={16} /></button>
+            <label className="full-admin-field">Customer<select name="customer_id" required><option value="">Choose customer</option>{data.customers.filter((customer) => customer.status !== "archived").map((customer) => <option key={customer.id} value={customer.id}>{customer.business_name} — {customer.name}</option>)}</select></label>
+            <label className="full-admin-field">Service<input name="service_name" placeholder="e.g. U2L.AI scan analytics" required /></label>
+            <label>Billing model<select name="billing_model" defaultValue="one_time"><option value="one_time">One-time</option><option value="monthly">Monthly</option></select></label>
+            <label>Agreed amount (₹)<input name="amount" type="number" min="0.01" step="0.01" required /></label>
+            <label>Renewal date<input name="renewal_date" type="date" /></label>
+            <label>Notes<input name="notes" /></label>
+            <button className="button button-dark" type="submit">Attach service <ArrowRight size={16} /></button>
           </form>
         </details>
       </div>
@@ -78,11 +78,11 @@ export default async function CustomersPage({ searchParams }: CustomersPageProps
 
               <form action={updateCustomerAction} className="record-edit-form customer-edit-form">
                 <input type="hidden" name="id" value={customer.id} />
-                <label>Status<select name="status" defaultValue={customer.status} disabled={data.demo}>{customerStatuses.map((status) => <option value={status} key={status}>{labelize(status)}</option>)}</select></label>
-                <label>Phone<input name="phone" defaultValue={customer.phone} required disabled={data.demo} /></label>
-                <label>Email<input name="email" type="email" defaultValue={customer.email ?? ""} disabled={data.demo} /></label>
-                <label className="full-admin-field">Notes<textarea name="notes" rows={2} defaultValue={customer.notes ?? ""} disabled={data.demo} /></label>
-                <button className="button button-outline" type="submit" disabled={data.demo}>Save customer</button>
+                <label>Status<select name="status" defaultValue={customer.status}>{customerStatuses.map((status) => <option value={status} key={status}>{labelize(status)}</option>)}</select></label>
+                <label>Phone<input name="phone" defaultValue={customer.phone} required /></label>
+                <label>Email<input name="email" type="email" defaultValue={customer.email ?? ""} /></label>
+                <label className="full-admin-field">Notes<textarea name="notes" rows={2} defaultValue={customer.notes ?? ""} /></label>
+                <button className="button button-outline" type="submit">Save customer</button>
               </form>
             </article>
           ))}

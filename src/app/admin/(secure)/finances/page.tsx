@@ -32,27 +32,27 @@ export default async function FinancesPage({ searchParams }: FinancePageProps) {
         <details className="admin-create-panel">
           <summary><Plus size={17} /> Record income or expense</summary>
           <form action={createTransactionAction} className="admin-form admin-form-grid">
-            <label>Type<select name="type" defaultValue="expense" disabled={data.demo}><option value="income">Income</option><option value="expense">Expense</option></select></label>
-            <label>Amount (₹)<input name="amount" type="number" min="0.01" step="0.01" required disabled={data.demo} /></label>
-            <label>Category<input name="category" placeholder="e.g. acrylic material" required disabled={data.demo} /></label>
-            <label>Payment mode<select name="payment_mode" defaultValue="upi" disabled={data.demo}>{paymentModes.map((mode) => <option key={mode} value={mode}>{labelize(mode)}</option>)}</select></label>
-            <label>Date<input name="occurred_on" type="date" defaultValue={today} disabled={data.demo} /></label>
-            <label>Customer<select name="customer_id" defaultValue="" disabled={data.demo}><option value="">Not linked</option>{data.customers.map((customer) => <option key={customer.id} value={customer.id}>{customer.business_name}</option>)}</select></label>
-            <label className="full-admin-field">Notes<textarea name="notes" rows={2} disabled={data.demo} /></label>
-            <button className="button button-dark" type="submit" disabled={data.demo}>Record transaction</button>
+            <label>Type<select name="type" defaultValue="expense"><option value="income">Income</option><option value="expense">Expense</option></select></label>
+            <label>Amount (₹)<input name="amount" type="number" min="0.01" step="0.01" required /></label>
+            <label>Category<input name="category" placeholder="e.g. acrylic material" required /></label>
+            <label>Payment mode<select name="payment_mode" defaultValue="upi">{paymentModes.map((mode) => <option key={mode} value={mode}>{labelize(mode)}</option>)}</select></label>
+            <label>Date<input name="occurred_on" type="date" defaultValue={today} /></label>
+            <label>Customer<select name="customer_id" defaultValue=""><option value="">Not linked</option>{data.customers.map((customer) => <option key={customer.id} value={customer.id}>{customer.business_name}</option>)}</select></label>
+            <label className="full-admin-field">Notes<textarea name="notes" rows={2} /></label>
+            <button className="button button-dark" type="submit">Record transaction</button>
           </form>
         </details>
 
         <details className="admin-create-panel">
           <summary><Plus size={17} /> Create a due</summary>
           <form action={createDueAction} className="admin-form admin-form-grid">
-            <label className="full-admin-field">Customer<select name="customer_id" required disabled={data.demo}><option value="">Choose customer</option>{data.customers.map((customer) => <option key={customer.id} value={customer.id}>{customer.business_name}</option>)}</select></label>
-            <label>Reference<input name="reference" placeholder="TAS-1048" required disabled={data.demo} /></label>
-            <label>Amount (₹)<input name="amount" type="number" min="0.01" step="0.01" required disabled={data.demo} /></label>
-            <label>Issue date<input name="issue_date" type="date" defaultValue={today} disabled={data.demo} /></label>
-            <label>Due date<input name="due_date" type="date" required disabled={data.demo} /></label>
-            <label className="full-admin-field">Notes<textarea name="notes" rows={2} disabled={data.demo} /></label>
-            <button className="button button-dark" type="submit" disabled={data.demo}>Create due</button>
+            <label className="full-admin-field">Customer<select name="customer_id" required><option value="">Choose customer</option>{data.customers.map((customer) => <option key={customer.id} value={customer.id}>{customer.business_name}</option>)}</select></label>
+            <label>Reference<input name="reference" placeholder="TAS-1048" required /></label>
+            <label>Amount (₹)<input name="amount" type="number" min="0.01" step="0.01" required /></label>
+            <label>Issue date<input name="issue_date" type="date" defaultValue={today} /></label>
+            <label>Due date<input name="due_date" type="date" required /></label>
+            <label className="full-admin-field">Notes<textarea name="notes" rows={2} /></label>
+            <button className="button button-dark" type="submit">Create due</button>
           </form>
         </details>
       </div>
@@ -96,11 +96,11 @@ export default async function FinancesPage({ searchParams }: FinancePageProps) {
                   <p>Due {new Date(`${due.due_date}T00:00:00`).toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" })}</p>
                   <form action={recordPaymentAction} className="payment-form">
                     <input type="hidden" name="due_id" value={due.id} />
-                    <label>Payment received (₹)<input name="amount" type="number" min="0.01" max={(balance / 100).toFixed(2)} step="0.01" required disabled={data.demo} /></label>
-                    <label>Mode<select name="payment_mode" defaultValue="upi" disabled={data.demo}>{paymentModes.map((mode) => <option key={mode} value={mode}>{labelize(mode)}</option>)}</select></label>
-                    <label>Date<input name="occurred_on" type="date" defaultValue={today} disabled={data.demo} /></label>
-                    <label>Note<input name="notes" placeholder="Optional" disabled={data.demo} /></label>
-                    <button className="button button-dark" type="submit" disabled={data.demo}>Record payment</button>
+                    <label>Payment received (₹)<input name="amount" type="number" min="0.01" max={(balance / 100).toFixed(2)} step="0.01" required /></label>
+                    <label>Mode<select name="payment_mode" defaultValue="upi">{paymentModes.map((mode) => <option key={mode} value={mode}>{labelize(mode)}</option>)}</select></label>
+                    <label>Date<input name="occurred_on" type="date" defaultValue={today} /></label>
+                    <label>Note<input name="notes" placeholder="Optional" /></label>
+                    <button className="button button-dark" type="submit">Record payment</button>
                   </form>
                 </article>
               );

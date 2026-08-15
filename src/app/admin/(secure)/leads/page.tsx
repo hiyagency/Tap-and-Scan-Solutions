@@ -25,17 +25,17 @@ export default async function LeadsPage({ searchParams }: LeadsPageProps) {
       <details className="admin-create-panel" open={data.leads.length === 0}>
         <summary><Plus size={17} /> Add a lead manually</summary>
         <form action={createLeadAction} className="admin-form admin-form-grid">
-          <label>Name<input name="name" required disabled={data.demo} /></label>
-          <label>Business<input name="business_name" required disabled={data.demo} /></label>
-          <label>Phone / WhatsApp<input name="phone" inputMode="tel" required disabled={data.demo} /></label>
-          <label>Email<input name="email" type="email" disabled={data.demo} /></label>
-          <label>City<input name="city" disabled={data.demo} /></label>
-          <label>Business type<input name="business_type" disabled={data.demo} /></label>
-          <label>Source<select name="source" defaultValue="manual" disabled={data.demo}><option value="manual">Manual</option><option value="referral">Referral</option><option value="instagram">Instagram</option><option value="phone">Phone</option><option value="website">Website</option></select></label>
-          <label>Timeline<input name="timeline" placeholder="e.g. Within 2 weeks" disabled={data.demo} /></label>
-          <fieldset className="admin-checks full-admin-field"><legend>Interested in</legend>{interestOptions.map((option) => <label key={option}><input type="checkbox" name="interests" value={option} disabled={data.demo} /> {option}</label>)}</fieldset>
-          <label className="full-admin-field">Notes<textarea name="notes" rows={3} disabled={data.demo} /></label>
-          <button className="button button-dark" type="submit" disabled={data.demo}>Add lead <ArrowRight size={16} /></button>
+          <label>Name<input name="name" required /></label>
+          <label>Business<input name="business_name" required /></label>
+          <label>Phone / WhatsApp<input name="phone" inputMode="tel" required /></label>
+          <label>Email<input name="email" type="email" /></label>
+          <label>City<input name="city" /></label>
+          <label>Business type<input name="business_type" /></label>
+          <label>Source<select name="source" defaultValue="manual"><option value="manual">Manual</option><option value="referral">Referral</option><option value="instagram">Instagram</option><option value="phone">Phone</option><option value="website">Website</option></select></label>
+          <label>Timeline<input name="timeline" placeholder="e.g. Within 2 weeks" /></label>
+          <fieldset className="admin-checks full-admin-field"><legend>Interested in</legend>{interestOptions.map((option) => <label key={option}><input type="checkbox" name="interests" value={option} /> {option}</label>)}</fieldset>
+          <label className="full-admin-field">Notes<textarea name="notes" rows={3} /></label>
+          <button className="button button-dark" type="submit">Add lead <ArrowRight size={16} /></button>
         </form>
       </details>
 
@@ -64,14 +64,14 @@ export default async function LeadsPage({ searchParams }: LeadsPageProps) {
               {lead.message ? <blockquote>“{lead.message}”</blockquote> : null}
               <form action={updateLeadAction} className="record-edit-form">
                 <input type="hidden" name="id" value={lead.id} />
-                <label>Status<select name="status" defaultValue={lead.status} disabled={data.demo}>{statuses.map((status) => <option value={status} key={status}>{labelize(status)}</option>)}</select></label>
-                <label>Internal notes<textarea name="notes" rows={2} defaultValue={lead.notes ?? ""} disabled={data.demo} /></label>
-                <button className="button button-outline" type="submit" disabled={data.demo}>Save update</button>
+                <label>Status<select name="status" defaultValue={lead.status}>{statuses.map((status) => <option value={status} key={status}>{labelize(status)}</option>)}</select></label>
+                <label>Internal notes<textarea name="notes" rows={2} defaultValue={lead.notes ?? ""} /></label>
+                <button className="button button-outline" type="submit">Save update</button>
               </form>
               {lead.status !== "won" ? (
                 <form action={convertLeadAction} className="convert-form">
                   <input type="hidden" name="id" value={lead.id} />
-                  <button className="text-button" type="submit" disabled={data.demo}>Convert to customer <ArrowRight size={15} /></button>
+                  <button className="text-button" type="submit">Convert to customer <ArrowRight size={15} /></button>
                 </form>
               ) : null}
             </article>

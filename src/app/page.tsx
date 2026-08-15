@@ -23,9 +23,12 @@ import {
   Wrench,
 } from "lucide-react";
 import { LeadForm } from "@/components/site/lead-form";
+import { getPublishedShipments } from "@/lib/admin-data";
+
+export const dynamic = "force-dynamic";
 
 const services = [
-  { icon: Sparkles, title: "U2L.AI-generated QR", copy: "Custom-designed through U2L.AI by default for high scannability, active tracking and a visual fit with your brand." },
+  { icon: QrCode, title: "High-scannability QR", copy: "Clear, brand-fitted QR designs tested to scan reliably on the finished physical product." },
   { icon: Droplets, title: "Waterproof builds", copy: "Made for counters, tables and real-world handling—not just a showroom photograph." },
   { icon: Nfc, title: "Premium NFC tags", copy: "One tap opens the exact action you choose, with QR available as a universal fallback." },
   { icon: Wrench, title: "Custom designed & engraved", copy: "Every stand and card is shaped around your brand, destination and physical space." },
@@ -58,7 +61,8 @@ const stories = [
   { tag: "Illustrative scenario · Coach", quote: "A single NFC card opens the latest course page, private learner material or a consultation booking link." },
 ];
 
-export default function Home() {
+export default async function Home() {
+  const shipments = await getPublishedShipments();
   return (
     <main>
       <header className="site-header">
@@ -67,23 +71,23 @@ export default function Home() {
           <span><strong>TAP AND SCAN</strong><small>SOLUTIONS</small></span>
         </Link>
         <nav aria-label="Primary navigation">
-          <Link href="#technology">U2L.AI</Link>
           <Link href="#solutions">Solutions</Link>
+          <Link href="#technology">U2L.AI</Link>
           <Link className="nav-cta" href="#enquire">Start a project</Link>
         </nav>
       </header>
 
       <section className="hero" id="top">
         <div className="hero-copy">
-          <p className="eyebrow"><span /> U2L.AI QR intelligence · built in by default</p>
+          <p className="eyebrow"><span /> Custom QR · NFC · acrylic products</p>
           <h1>Turn one <em>tap</em> into the next customer action.</h1>
-          <p className="hero-intro">Every custom QR code starts with U2L.AI for high scannability and active tracking, then moves people to your menu, reviews, Instagram, portfolio or private material—instantly.</p>
+          <p className="hero-intro">Waterproof, custom-built QR and NFC products that move people to your menu, reviews, Instagram, portfolio or private material—instantly.</p>
           <div className="hero-actions">
             <Link className="button button-primary" href="#enquire">Get a custom setup <ArrowDown aria-hidden="true" size={18} /></Link>
             <a className="text-link" href="tel:+916261565667">Talk to Abhigyan</a>
           </div>
           <div className="hero-proof" aria-label="Product highlights">
-            <span><Sparkles aria-hidden="true" /> U2L.AI generated + tracked</span>
+            <span><QrCode aria-hidden="true" /> High-scannability QR</span>
             <span><ShieldCheck aria-hidden="true" /> Waterproof builds</span>
           </div>
         </div>
@@ -101,33 +105,6 @@ export default function Home() {
       <section className="preview-strip" aria-label="Core promise">
         <p>One physical touchpoint.</p>
         <p>Every important destination.</p>
-      </section>
-
-      <section className="u2l-system" id="technology">
-        <div className="u2l-layout section-shell">
-          <header className="u2l-intro">
-            <div className="u2l-lockup">
-              <span className="u2l-logo-frame"><Image src="/brand/u2l-ai-logo.png" alt="U2L.AI official logo" width={128} height={128} /></span>
-              <span><strong>U2L.AI</strong><small>QR intelligence layer</small></span>
-            </div>
-            <p className="eyebrow"><span /> The system behind the product</p>
-            <h2>AI is already behind every scan.</h2>
-            <p>U2L.AI is not an optional styling effect added at the end. It is the default QR generation and tracking layer behind every TAP AND SCAN setup.</p>
-          </header>
-
-          <div className="u2l-specs" aria-label="U2L.AI QR capabilities">
-            <article><span>01 / Generate</span><h3>Custom AI QR design</h3><p>Generated around the intended destination and visual identity, then checked for dependable real-world scanning.</p></article>
-            <article><span>02 / Track</span><h3>Active from day one</h3><p>Tracking is built into the QR setup by default, so scan activity can become useful business information.</p></article>
-            <article><span>03 / Understand</span><h3>See what gets scanned</h3><p>Add monthly analytics access for scan counts, activity trends and performance across tracked QR touchpoints.</p></article>
-          </div>
-
-          <aside className="u2l-analytics">
-            <div><small>Separate monthly service</small><strong>Scan analytics</strong></div>
-            <p>Clients can access ongoing QR scan analytics for a small monthly fee. The physical setup remains a one-time charge.</p>
-            <ul><li><Check aria-hidden="true" /> Number of QR scans</li><li><Check aria-hidden="true" /> Period and activity trends</li><li><Check aria-hidden="true" /> Per-code performance visibility</li></ul>
-            <Link href="#enquire">Ask for tracked QR analytics <ArrowRight aria-hidden="true" size={17} /></Link>
-          </aside>
-        </div>
       </section>
 
       <section className="problem-section section-shell" id="work">
@@ -184,6 +161,33 @@ export default function Home() {
         </div>
       </section>
 
+      <section className="u2l-system" id="technology">
+        <div className="u2l-layout section-shell">
+          <header className="u2l-intro">
+            <div className="u2l-lockup">
+              <span className="u2l-logo-frame"><Image src="/brand/u2l-ai-logo.png" alt="U2L.AI official logo" width={128} height={128} /></span>
+              <span><strong>U2L.AI</strong><small>QR intelligence layer</small></span>
+            </div>
+            <p className="eyebrow"><span /> The system behind the product</p>
+            <h2>AI is already behind every scan.</h2>
+            <p>U2L.AI is not an optional styling effect added at the end. It is the default QR generation and tracking layer behind every TAP AND SCAN setup.</p>
+          </header>
+
+          <div className="u2l-specs" aria-label="U2L.AI QR capabilities">
+            <article><span>01 / Generate</span><h3>Custom AI QR design</h3><p>Generated around the intended destination and visual identity, then checked for dependable real-world scanning.</p></article>
+            <article><span>02 / Track</span><h3>Active from day one</h3><p>Tracking is built into the QR setup by default, so scan activity can become useful business information.</p></article>
+            <article><span>03 / Understand</span><h3>See what gets scanned</h3><p>Add monthly analytics access for scan counts, activity trends and performance across tracked QR touchpoints.</p></article>
+          </div>
+
+          <aside className="u2l-analytics">
+            <div><small>Separate monthly service</small><strong>Scan analytics</strong></div>
+            <p>Clients can access ongoing QR scan analytics for a small monthly fee. The physical setup remains a one-time charge.</p>
+            <ul><li><Check aria-hidden="true" /> Number of QR scans</li><li><Check aria-hidden="true" /> Period and activity trends</li><li><Check aria-hidden="true" /> Per-code performance visibility</li></ul>
+            <Link href="#enquire">Ask for tracked QR analytics <ArrowRight aria-hidden="true" size={17} /></Link>
+          </aside>
+        </div>
+      </section>
+
       <section className="material-break">
         <div className="material-media">
           <Image src="/media/product-range.jpg" alt="A range of real custom QR and NFC cards" fill sizes="100vw" />
@@ -202,6 +206,19 @@ export default function Home() {
             return <article key={item.label}><Icon aria-hidden="true" /><p className="case-label">{item.label}</p><h3>{item.title}</h3><p>{item.copy}</p><ArrowRight aria-hidden="true" className="case-arrow" /></article>;
           })}
         </div>
+      </section>
+
+      <section className="shipments-section section-shell" id="recent-work">
+        <div className="section-heading split-heading">
+          <div><div className="section-kicker"><span>05</span><p>Fresh from the workshop</p></div><h2>Recently<br />shipped.</h2></div>
+          <p>Real completed products added by our team as orders leave the workshop.</p>
+        </div>
+        {shipments.length ? <div className="shipment-public-grid">{shipments.map((shipment) => (
+          <article key={shipment.id}>
+            <div className="shipment-image-wrap"><Image src={shipment.image_url} alt={shipment.alt_text} fill sizes="(max-width: 700px) 88vw, (max-width: 1100px) 45vw, 30vw" /></div>
+            <div><small>Shipped {new Date(`${shipment.shipped_on}T00:00:00`).toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" })}</small><h3>{shipment.title}</h3><p>{shipment.caption || [shipment.business_name, shipment.city].filter(Boolean).join(" · ") || "A custom TAP AND SCAN build."}</p></div>
+          </article>
+        ))}</div> : <div className="shipment-empty"><PackageCheck aria-hidden="true" /><p>New shipment stories are being prepared. The first completed orders will appear here.</p></div>}
       </section>
 
       <section className="pricing-model section-shell">
@@ -244,9 +261,12 @@ export default function Home() {
       </section>
 
       <section className="trust-section section-shell">
-        <Image src="/brand/tap-and-scan-logo.png" alt="TAP AND SCAN SOLUTIONS official logo" width={260} height={260} />
-        <div><p className="eyebrow"><span /> The people behind the product</p><h2>Backed by HIY Agency.</h2><p>TAP AND SCAN SOLUTIONS is led by sole proprietor <strong>Abhigyan Pandey</strong> and backed by the practical digital experience of HIY Agency.</p></div>
-        <a className="button button-outline" href="mailto:hello@hiy.agency">hello@hiy.agency <ArrowRight aria-hidden="true" size={18} /></a>
+        <div className="hiy-lockup"><Image src="/brand/hiy-agency-logo.svg" alt="HIY Agency official logo" width={220} height={220} /><span>Official agency partner</span></div>
+        <div className="founder-profile">
+          <div className="founder-portrait"><Image src="/media/abhigyan-pandey-founder.webp" alt="Abhigyan Pandey, founder of TAP AND SCAN SOLUTIONS" fill sizes="(max-width: 760px) 82px, 128px" /><small>Founder</small></div>
+          <div><p className="eyebrow"><span /> The person behind the product</p><h2>Built by Abhigyan.<br />Backed by HIY Agency.</h2><p>TAP AND SCAN SOLUTIONS is led by sole proprietor <strong>Abhigyan Pandey</strong>, bringing 4+ years of digital work across websites, paid ads and business systems.</p><ul><li>IIT Delhi certified</li><li>Former cybersecurity field experience</li><li>Website, ads and digital systems specialist</li></ul></div>
+        </div>
+        <a className="button button-outline" href="https://hiy.agency" target="_blank" rel="noreferrer">Visit HIY Agency <ArrowRight aria-hidden="true" size={18} /></a>
       </section>
 
       <section className="enquiry-section" id="enquire">

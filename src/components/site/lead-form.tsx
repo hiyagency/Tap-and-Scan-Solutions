@@ -26,7 +26,7 @@ export function LeadForm() {
   const [form, setForm] = useState<FormState>(initialState);
   const [error, setError] = useState("");
   const [submitting, setSubmitting] = useState(false);
-  const [result, setResult] = useState<{ leadId: string; persisted: boolean } | null>(null);
+  const [result, setResult] = useState<{ leadId: string } | null>(null);
 
   function update<K extends keyof FormState>(key: K, value: FormState[K]) {
     setForm((current) => ({ ...current, [key]: value }));
@@ -71,7 +71,7 @@ export function LeadForm() {
       });
       const payload = (await response.json()) as { leadId?: string; persisted?: boolean; error?: string };
       if (!response.ok || !payload.leadId) throw new Error(payload.error ?? "We could not submit your enquiry.");
-      setResult({ leadId: payload.leadId, persisted: payload.persisted !== false });
+      setResult({ leadId: payload.leadId });
     } catch (submissionError) {
       setError(submissionError instanceof Error ? submissionError.message : "We could not submit your enquiry.");
     } finally {
@@ -88,9 +88,6 @@ export function LeadForm() {
         <p>
           Your reference is <strong>{result.leadId}</strong>. We will contact you on the number provided.
         </p>
-        {!result.persisted && (
-          <p className="preview-notice">Preview mode: the form is validated, but cloud storage is connected during Supabase setup.</p>
-        )}
         <button className="text-button" type="button" onClick={() => { setForm(initialState); setResult(null); setStep(1); }}>
           Send another enquiry
         </button>

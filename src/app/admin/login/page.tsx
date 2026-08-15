@@ -36,14 +36,8 @@ export default async function AdminLoginPage({ searchParams }: LoginPageProps) {
               </form>
             </details>
           </>
-        ) : (
-          <div className="login-preview">
-            <p>Supabase is not connected in this build, so the console opens with clearly marked preview records.</p>
-            <Link className="button button-dark" href="/admin">Explore the dashboard</Link>
-          </div>
-        )}
+        ) : <div className="login-preview" role="alert"><p>The admin database is not configured for this deployment. Add the required Supabase environment variables in Vercel, then redeploy.</p></div>}
       </section>
     </main>
   );
 }
-
