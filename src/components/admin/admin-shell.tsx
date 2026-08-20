@@ -21,7 +21,7 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
         </Link>
         <nav aria-label="Admin navigation">
           {links.map(({ href, label, icon: Icon }) => (
-            <Link href={href} key={href}><Icon size={18} aria-hidden="true" />{label}</Link>
+            <Link href={href} prefetch key={href}><Icon size={18} aria-hidden="true" />{label}</Link>
           ))}
         </nav>
         <div className="admin-sidebar-foot">
