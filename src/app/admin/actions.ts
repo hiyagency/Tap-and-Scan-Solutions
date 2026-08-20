@@ -3,7 +3,7 @@
 import { randomUUID } from "node:crypto";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
-import { requireOwner, createLoginClient } from "@/lib/admin-auth";
+import { OWNER_EMAIL, ensureOwnerAccount, ensureOwnerProfile, requireOwner, createLoginClient } from "@/lib/admin-auth";
 import { hasPublicSupabaseConfig } from "@/lib/supabase/config";
 import { getSiteUrl } from "@/lib/site-url";
 
@@ -30,18 +30,28 @@ export async function loginAction(formData: FormData) {
   if (!hasPublicSupabaseConfig()) redirect("/admin");
   const email = textValue(formData, "email");
   const password = textValue(formData, "password");
+  if (email.toLowerCase() !== OWNER_EMAIL) redirect("/admin/login?error=Owner%20access%20is%20required");
   const supabase = await createLoginClient();
-  const { error } = await supabase.auth.signInWithPassword({ email, password });
+  const { data, error } = await supabase.auth.signInWithPassword({ email: OWNER_EMAIL, password });
   if (error) redirect(`/admin/login?error=${encodeURIComponent(error.message)}`);
+  if (!data.user) redirect("/admin/login?error=Sign%20in%20did%20not%20return%20a%20user");
+  try { await ensureOwnerProfile(data.user); } catch (profileError) {
+    await supabase.auth.signOut();
+    redirect(`/admin/login?error=${encodeURIComponent(profileError instanceof Error ? profileError.message : "Owner profile sync failed")}`);
+  }
   redirect("/admin");
 }
 
 export async function resetPasswordAction(formData: FormData) {
   if (!hasPublicSupabaseConfig()) redirect("/admin/login?message=Supabase%20is%20not%20connected%20yet");
   const email = textValue(formData, "email");
+  if (email.toLowerCase() !== OWNER_EMAIL) redirect("/admin/login?message=If%20the%20account%20is%20approved%2C%20reset%20instructions%20will%20be%20sent");
+  try { await ensureOwnerAccount(); } catch (accountError) {
+    redirect(`/admin/login?error=${encodeURIComponent(accountError instanceof Error ? accountError.message : "Owner account setup failed")}`);
+  }
   const supabase = await createLoginClient();
   const siteUrl = getSiteUrl();
-  const { error } = await supabase.auth.resetPasswordForEmail(email, { redirectTo: `${siteUrl}/auth/callback?next=/admin/update-password` });
+  const { error } = await supabase.auth.resetPasswordForEmail(OWNER_EMAIL, { redirectTo: `${siteUrl}/auth/callback?next=/admin/update-password` });
   if (error) redirect(`/admin/login?error=${encodeURIComponent(error.message)}`);
   redirect("/admin/login?message=Password%20reset%20instructions%20have%20been%20sent");
 }

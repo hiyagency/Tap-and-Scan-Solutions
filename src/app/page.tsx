@@ -66,9 +66,9 @@ export default async function Home() {
   return (
     <main>
       <header className="site-header">
-        <Link className="brand" href="#top" aria-label="TAP AND SCAN SOLUTIONS home">
+        <Link className="brand" href="#top" aria-label="NFC BY ABHIGYAN home">
           <Image src="/brand/tap-and-scan-logo.png" alt="" width={64} height={64} priority />
-          <span><strong>TAP AND SCAN</strong><small>SOLUTIONS</small></span>
+          <span><strong>NFC BY</strong><small>ABHIGYAN</small></span>
         </Link>
         <nav aria-label="Primary navigation">
           <Link href="#solutions">Solutions</Link>
@@ -93,7 +93,7 @@ export default async function Home() {
         </div>
 
         <div className="hero-media">
-          <video autoPlay muted loop playsInline poster="/media/workshop-poster.jpg" aria-label="A phone tapping a custom TAP AND SCAN product">
+          <video autoPlay muted loop playsInline poster="/media/workshop-poster.jpg" aria-label="A phone tapping a custom NFC BY ABHIGYAN product">
             <source src="/media/workshop-loop.webm" type="video/webm" />
             <source src="/media/workshop-loop.mp4" type="video/mp4" />
           </video>
@@ -138,7 +138,7 @@ export default async function Home() {
       <section className="proof-section section-shell">
         <div className="proof-grid">
           <figure className="proof-main">
-            <Image src="/media/workshop-process.jpg" alt="A TAP AND SCAN product being designed at the workshop" width={1400} height={788} sizes="(max-width: 900px) 100vw, 66vw" />
+            <Image src="/media/workshop-process.jpg" alt="An NFC BY ABHIGYAN product being designed at the workshop" width={1400} height={788} sizes="(max-width: 900px) 100vw, 66vw" />
             <figcaption><span>Designed in-house</span><p>The route starts with your business, not a template.</p></figcaption>
           </figure>
           <figure className="proof-side">
@@ -170,7 +170,7 @@ export default async function Home() {
             </div>
             <p className="eyebrow"><span /> The system behind the product</p>
             <h2>AI is already behind every scan.</h2>
-            <p>U2L.AI is not an optional styling effect added at the end. It is the default QR generation and tracking layer behind every TAP AND SCAN setup.</p>
+            <p>U2L.AI is not an optional styling effect added at the end. It is the default QR generation and tracking layer behind every NFC BY ABHIGYAN setup.</p>
           </header>
 
           <div className="u2l-specs" aria-label="U2L.AI QR capabilities">
@@ -216,7 +216,7 @@ export default async function Home() {
         {shipments.length ? <div className="shipment-public-grid">{shipments.map((shipment) => (
           <article key={shipment.id}>
             <div className="shipment-image-wrap"><Image src={shipment.image_url} alt={shipment.alt_text} fill sizes="(max-width: 700px) 88vw, (max-width: 1100px) 45vw, 30vw" /></div>
-            <div><small>Shipped {new Date(`${shipment.shipped_on}T00:00:00`).toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" })}</small><h3>{shipment.title}</h3><p>{shipment.caption || [shipment.business_name, shipment.city].filter(Boolean).join(" · ") || "A custom TAP AND SCAN build."}</p></div>
+            <div><small>Shipped {new Date(`${shipment.shipped_on}T00:00:00`).toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" })}</small><h3>{shipment.title}</h3><p>{shipment.caption || [shipment.business_name, shipment.city].filter(Boolean).join(" · ") || "A custom NFC BY ABHIGYAN build."}</p></div>
           </article>
         ))}</div> : <div className="shipment-empty"><PackageCheck aria-hidden="true" /><p>New shipment stories are being prepared. The first completed orders will appear here.</p></div>}
       </section>
@@ -238,7 +238,7 @@ export default async function Home() {
 
       <section className="process-section section-shell">
         <div className="section-heading split-heading">
-          <div><div className="section-kicker"><span>05</span><p>The process</p></div><h2>From brief<br />to first tap.</h2></div>
+          <div><div className="section-kicker"><span>06</span><p>The process</p></div><h2>From brief<br />to first tap.</h2></div>
           <p>A clear approval process keeps the destination, physical format and final design aligned before production.</p>
         </div>
         <div className="process-list">
@@ -248,7 +248,7 @@ export default async function Home() {
 
       <section className="story-proof section-shell">
         <div className="story-media">
-          <video muted loop playsInline controls poster="/media/product-spread.jpg" aria-label="Real TAP AND SCAN product range footage"><source src="/media/product-loop.mp4" type="video/mp4" /></video>
+          <video muted loop playsInline controls poster="/media/product-spread.jpg" aria-label="Real NFC BY ABHIGYAN product range footage"><source src="/media/product-loop.mp4" type="video/mp4" /></video>
           <span>Tap to see the actual range</span>
         </div>
         <div className="story-copy">
@@ -263,8 +263,8 @@ export default async function Home() {
       <section className="trust-section section-shell">
         <div className="hiy-lockup"><Image src="/brand/hiy-agency-logo.svg" alt="HIY Agency official logo" width={220} height={220} /><span>Official agency partner</span></div>
         <div className="founder-profile">
-          <div className="founder-portrait"><Image src="/media/abhigyan-pandey-founder.webp" alt="Abhigyan Pandey, founder of TAP AND SCAN SOLUTIONS" fill sizes="(max-width: 760px) 82px, 128px" /><small>Founder</small></div>
-          <div><p className="eyebrow"><span /> The person behind the product</p><h2>Built by Abhigyan.<br />Backed by HIY Agency.</h2><p>TAP AND SCAN SOLUTIONS is led by sole proprietor <strong>Abhigyan Pandey</strong>, bringing 4+ years of digital work across websites, paid ads and business systems.</p><ul><li>IIT Delhi certified</li><li>Former cybersecurity field experience</li><li>Website, ads and digital systems specialist</li></ul></div>
+          <div className="founder-portrait"><Image src="/media/abhigyan-pandey-founder.webp" alt="Abhigyan Pandey, founder of NFC BY ABHIGYAN" fill sizes="(max-width: 760px) 82px, 128px" /><small>Founder</small></div>
+          <div><p className="eyebrow"><span /> The person behind the product</p><h2>Built by Abhigyan.<br />Backed by HIY Agency.</h2><p>NFC BY ABHIGYAN is led by sole proprietor <strong>Abhigyan Pandey</strong>, bringing 4+ years of digital work across websites, paid ads and business systems.</p><ul><li>IIT Delhi certified</li><li>Former cybersecurity field experience</li><li>Website, ads and digital systems specialist</li></ul></div>
         </div>
         <a className="button button-outline" href="https://hiy.agency" target="_blank" rel="noreferrer">Visit HIY Agency <ArrowRight aria-hidden="true" size={18} /></a>
       </section>
@@ -272,13 +272,13 @@ export default async function Home() {
       <section className="enquiry-section" id="enquire">
         <div className="section-shell enquiry-grid">
           <div className="enquiry-copy">
-            <div className="section-kicker inverse"><span>06</span><p>Your setup</p></div>
+            <div className="section-kicker inverse"><span>07</span><p>Your setup</p></div>
             <h2>Where should the tap take your customer?</h2>
             <p>Share the business and destination. We will suggest the right U2L.AI QR, NFC and physical format, with optional monthly scan analytics.</p>
             <div className="direct-links">
               <a href="tel:+916261565667"><span>Call</span>+91 62615 65667</a>
               <a href="https://wa.me/916261565667" target="_blank" rel="noreferrer"><span>WhatsApp</span>Start a chat</a>
-              <a href="https://instagram.com/tapandscan.solutions" target="_blank" rel="noreferrer"><span>Instagram</span>@tapandscan.solutions</a>
+              <a href="https://instagram.com/nfcbyabhigyan" target="_blank" rel="noreferrer"><span>Instagram</span>@nfcbyabhigyan</a>
             </div>
           </div>
           <LeadForm />
@@ -286,10 +286,10 @@ export default async function Home() {
       </section>
 
       <footer className="site-footer section-shell">
-        <div className="brand footer-brand"><Image src="/brand/tap-and-scan-logo.png" alt="" width={64} height={64} /><span><strong>TAP AND SCAN</strong><small>SOLUTIONS</small></span></div>
+        <div className="brand footer-brand"><Image src="/brand/tap-and-scan-logo.png" alt="" width={64} height={64} /><span><strong>NFC BY</strong><small>ABHIGYAN</small></span></div>
         <p>U2L.AI-generated tracked QR, NFC and acrylic solutions for the moment your customer is ready to act.</p>
         <div><a href="mailto:hello@hiy.agency">hello@hiy.agency</a><a href="/privacy">Privacy</a><a href="/admin/login">Owner login</a></div>
-        <small>© {new Date().getFullYear()} TAP AND SCAN SOLUTIONS · Sole proprietor Abhigyan Pandey</small>
+        <small>© {new Date().getFullYear()} NFC BY ABHIGYAN · Sole proprietor Abhigyan Pandey</small>
       </footer>
     </main>
   );

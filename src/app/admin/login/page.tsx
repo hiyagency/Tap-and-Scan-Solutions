@@ -15,7 +15,7 @@ export default async function AdminLoginPage({ searchParams }: LoginPageProps) {
     <main className="admin-login-page">
       <Link className="admin-login-back" href="/"><ArrowLeft size={17} /> Public website</Link>
       <section className="admin-login-card">
-        <Image src="/brand/tap-and-scan-logo.png" alt="Tap and Scan Solutions" width={86} height={86} priority />
+        <Image src="/brand/tap-and-scan-logo.png" alt="NFC BY ABHIGYAN" width={86} height={86} priority />
         <p className="eyebrow">Owner-only workspace</p>
         <h1>Business, in one place.</h1>
         <p>Track enquiries, customers, payments and dues with the account approved in Supabase.</p>

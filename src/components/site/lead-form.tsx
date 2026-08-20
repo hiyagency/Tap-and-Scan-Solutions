@@ -153,7 +153,7 @@ export function LeadForm() {
           <label className="message-field">Anything else?<textarea rows={4} value={form.message} onChange={(event) => update("message", event.target.value)} placeholder="Tell us where the product will be used or where it should send people." /></label>
           <label className="consent-field">
             <input type="checkbox" checked={form.consent} onChange={(event) => update("consent", event.target.checked)} />
-            <span>I agree that TAP AND SCAN SOLUTIONS may contact me about this enquiry. <a href="/privacy">Privacy details</a>.</span>
+            <span>I agree that NFC BY ABHIGYAN may contact me about this enquiry. <a href="/privacy">Privacy details</a>.</span>
           </label>
           <label className="honey-field" aria-hidden="true">Website<input tabIndex={-1} autoComplete="off" value={form.website} onChange={(event) => update("website", event.target.value)} /></label>
           {error && <p className="form-error" role="alert">{error}</p>}

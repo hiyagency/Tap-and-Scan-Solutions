@@ -10,9 +10,22 @@ export async function GET() {
   if (!configuredUrl || !admin) {
     return NextResponse.json({ ok: false, database: "not_configured", projectRef }, { status: 503 });
   }
-  const { error } = await admin.from("shipments").select("id", { count: "exact", head: true });
-  if (error) {
+  const [shipmentsResult, profilesResult, usersResult] = await Promise.all([
+    admin.from("shipments").select("id", { count: "exact", head: true }),
+    admin.from("profiles").select("id", { count: "exact", head: true }),
+    admin.auth.admin.listUsers({ page: 1, perPage: 1000 }),
+  ]);
+  if (shipmentsResult.error || profilesResult.error || usersResult.error) {
     return NextResponse.json({ ok: false, database: "schema_incomplete", projectRef }, { status: 503 });
   }
-  return NextResponse.json({ ok: true, database: "ready", projectRef });
+  const ownerUser = usersResult.data.users.find((user) => user.email?.toLowerCase() === "hello@hiy.agency");
+  const ownerProfile = ownerUser
+    ? await admin.from("profiles").select("role").eq("id", ownerUser.id).maybeSingle()
+    : { data: null, error: null };
+  return NextResponse.json({
+    ok: true,
+    database: "ready",
+    auth: ownerUser && ownerProfile.data?.role === "owner" ? "owner_ready" : "owner_setup_required",
+    projectRef,
+  });
 }

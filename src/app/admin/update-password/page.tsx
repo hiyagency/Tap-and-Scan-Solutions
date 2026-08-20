@@ -12,7 +12,7 @@ export default async function UpdatePasswordPage({ searchParams }: UpdatePasswor
     <main className="admin-login-page">
       <Link className="admin-login-back" href="/admin/login"><ArrowLeft size={17} /> Back to owner login</Link>
       <section className="admin-login-card">
-        <Image src="/brand/tap-and-scan-logo.png" alt="Tap and Scan Solutions" width={86} height={86} priority />
+        <Image src="/brand/tap-and-scan-logo.png" alt="NFC BY ABHIGYAN" width={86} height={86} priority />
         <p className="eyebrow">Secure account recovery</p>
         <h1>Choose a new password.</h1>
         <p>Use at least 10 characters. This link works only after Supabase has verified the recovery email.</p>
@@ -26,4 +26,3 @@ export default async function UpdatePasswordPage({ searchParams }: UpdatePasswor
     </main>
   );
 }
-

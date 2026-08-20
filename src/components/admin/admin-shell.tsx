@@ -15,9 +15,9 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
   return (
     <div className="admin-shell">
       <aside className="admin-sidebar">
-        <Link className="admin-brand" href="/" aria-label="Tap and Scan Solutions home">
+        <Link className="admin-brand" href="/" aria-label="NFC BY ABHIGYAN home">
           <Image src="/brand/tap-and-scan-logo.png" alt="" width={48} height={48} />
-          <span><strong>TAP AND SCAN</strong><small>Owner console</small></span>
+          <span><strong>NFC BY ABHIGYAN</strong><small>Owner console</small></span>
         </Link>
         <nav aria-label="Admin navigation">
           {links.map(({ href, label, icon: Icon }) => (

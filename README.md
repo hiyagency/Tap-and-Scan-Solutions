@@ -1,4 +1,4 @@
-# TAP AND SCAN SOLUTIONS
+# NFC BY ABHIGYAN
 
 A mobile-first Next.js storytelling website and owner-only operations console for QR, NFC and custom acrylic products.
 
