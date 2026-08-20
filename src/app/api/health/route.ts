@@ -12,8 +12,7 @@ export async function GET() {
     return NextResponse.json({ ok: false, database: "not_configured", projectRef }, { status: 503 });
   }
   try { await ensureShipmentBucket(admin); } catch { /* Report the named storage check below. */ }
-  const [shipmentsResult, profilesResult, leadsResult, customersResult, servicesResult, duesResult, transactionsResult, bucketResult, usersResult] = await Promise.all([
-    admin.from("shipments").select("id", { count: "exact", head: true }),
+  const [profilesResult, leadsResult, customersResult, servicesResult, duesResult, transactionsResult, bucketResult, usersResult] = await Promise.all([
     admin.from("profiles").select("id", { count: "exact", head: true }),
     admin.from("leads").select("id", { count: "exact", head: true }),
     admin.from("customers").select("id", { count: "exact", head: true }),
@@ -24,7 +23,7 @@ export async function GET() {
     admin.auth.admin.listUsers({ page: 1, perPage: 1000 }),
   ]);
   const failedChecks = [
-    ["shipments", shipmentsResult.error], ["profiles", profilesResult.error], ["leads", leadsResult.error],
+    ["profiles", profilesResult.error], ["leads", leadsResult.error],
     ["customers", customersResult.error], ["customer_services", servicesResult.error], ["dues", duesResult.error],
     ["transactions", transactionsResult.error], ["shipment_storage", bucketResult.error], ["auth", usersResult.error],
   ].filter(([, error]) => Boolean(error)).map(([name]) => name);

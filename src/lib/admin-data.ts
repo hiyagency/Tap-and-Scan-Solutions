@@ -2,6 +2,7 @@ import "server-only";
 
 import { createAdminClient } from "@/lib/supabase/admin";
 import { requireOwner } from "@/lib/admin-auth";
+import { readShipmentManifest } from "@/lib/shipment-repository";
 export { calculateFinanceTotals } from "@/lib/finance";
 
 export type LeadStatus = "new" | "contacted" | "qualified" | "quoted" | "won" | "lost";
@@ -72,19 +73,19 @@ function withShipmentUrl<T extends Omit<ShipmentRow, "image_url">>(shipment: T, 
 
 export async function getAdminShipments(): Promise<ShipmentRow[]> {
   const supabase = await getAuthorizedAdminClient();
-  const { data, error } = await supabase.from("shipments").select("*").order("shipped_on", { ascending: false }).order("sort_order", { ascending: false });
-  if (error) throw new Error(error.message);
+  const data = await readShipmentManifest(supabase);
   const baseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
-  return (data ?? []).map((row) => withShipmentUrl(row as Omit<ShipmentRow, "image_url">, baseUrl));
+  return data.sort((a, b) => b.shipped_on.localeCompare(a.shipped_on) || b.sort_order - a.sort_order).map((row) => withShipmentUrl(row, baseUrl));
 }
 
 export async function getPublishedShipments(): Promise<ShipmentRow[]> {
   const supabase = createAdminClient();
   if (!supabase) return [];
-  const { data, error } = await supabase.from("shipments").select("*").eq("published", true).order("shipped_on", { ascending: false }).order("sort_order", { ascending: false }).limit(12);
-  if (error) return [];
-  const baseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
-  return (data ?? []).map((row) => withShipmentUrl(row as Omit<ShipmentRow, "image_url">, baseUrl));
+  try {
+    const data = await readShipmentManifest(supabase);
+    const baseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
+    return data.filter((row) => row.published).sort((a, b) => b.shipped_on.localeCompare(a.shipped_on) || b.sort_order - a.sort_order).slice(0, 12).map((row) => withShipmentUrl(row, baseUrl));
+  } catch { return []; }
 }
 
 export function formatInr(paise: number) {

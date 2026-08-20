@@ -8,6 +8,7 @@ import { hasPublicSupabaseConfig } from "@/lib/supabase/config";
 import { getSiteUrl } from "@/lib/site-url";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { ensureShipmentBucket } from "@/lib/shipment-storage";
+import { readShipmentManifest, writeShipmentManifest } from "@/lib/shipment-repository";
 
 function textValue(formData: FormData, key: string) {
   const value = formData.get(key);
@@ -266,19 +267,19 @@ export async function createShipmentAction(formData: FormData) {
   const { error: uploadError } = await supabase.storage.from("shipments").upload(imagePath, await image.arrayBuffer(), { cacheControl: "31536000", contentType: image.type, upsert: false });
   if (uploadError) mutationError("/admin/shipments", uploadError.message);
 
-  const { error: insertError } = await supabase.from("shipments").insert({
-    title,
-    business_name: optionalText(formData, "business_name"),
-    city: optionalText(formData, "city"),
-    caption: optionalText(formData, "caption"),
-    alt_text: altText,
-    image_path: imagePath,
-    shipped_on: textValue(formData, "shipped_on") || new Date().toISOString().slice(0, 10),
-    published: formData.get("published") === "on",
-  });
-  if (insertError) {
+  try {
+    const shipments = await readShipmentManifest(supabase);
+    shipments.push({
+      id: randomUUID(), title,
+      business_name: optionalText(formData, "business_name"), city: optionalText(formData, "city"),
+      caption: optionalText(formData, "caption"), alt_text: altText, image_path: imagePath,
+      shipped_on: textValue(formData, "shipped_on") || new Date().toISOString().slice(0, 10),
+      published: formData.get("published") === "on", sort_order: 0, created_at: new Date().toISOString(),
+    });
+    await writeShipmentManifest(supabase, shipments);
+  } catch (insertError) {
     await supabase.storage.from("shipments").remove([imagePath]);
-    mutationError("/admin/shipments", insertError.message);
+    mutationError("/admin/shipments", insertError instanceof Error ? insertError.message : "Shipment could not be saved.");
   }
   revalidatePath("/");
   revalidatePath("/admin/shipments");
@@ -290,8 +291,13 @@ export async function updateShipmentAction(formData: FormData) {
   const supabase = createAdminClient();
   if (!supabase) mutationError("/admin/shipments", "Shipment storage is not configured on this deployment.");
   const id = textValue(formData, "id");
-  const { error } = await supabase.from("shipments").update({ published: formData.get("published") === "on" }).eq("id", id);
-  if (error) mutationError("/admin/shipments", error.message);
+  try {
+    const shipments = await readShipmentManifest(supabase);
+    const shipment = shipments.find((item) => item.id === id);
+    if (!shipment) mutationError("/admin/shipments", "Shipment not found.");
+    shipment.published = formData.get("published") === "on";
+    await writeShipmentManifest(supabase, shipments);
+  } catch (error) { mutationError("/admin/shipments", error instanceof Error ? error.message : "Shipment could not be updated."); }
   revalidatePath("/");
   revalidatePath("/admin/shipments");
   redirect("/admin/shipments?message=Shipment%20visibility%20updated");
@@ -302,11 +308,14 @@ export async function deleteShipmentAction(formData: FormData) {
   const supabase = createAdminClient();
   if (!supabase) mutationError("/admin/shipments", "Shipment storage is not configured on this deployment.");
   const id = textValue(formData, "id");
-  const { data, error: readError } = await supabase.from("shipments").select("image_path").eq("id", id).single();
-  if (readError || !data) mutationError("/admin/shipments", readError?.message ?? "Shipment not found.");
-  const { error: deleteError } = await supabase.from("shipments").delete().eq("id", id);
-  if (deleteError) mutationError("/admin/shipments", deleteError.message);
-  await supabase.storage.from("shipments").remove([data.image_path]);
+  try {
+    const shipments = await readShipmentManifest(supabase);
+    const shipment = shipments.find((item) => item.id === id);
+    if (!shipment) mutationError("/admin/shipments", "Shipment not found.");
+    await writeShipmentManifest(supabase, shipments.filter((item) => item.id !== id));
+    const { error } = await supabase.storage.from("shipments").remove([shipment.image_path]);
+    if (error) throw error;
+  } catch (error) { mutationError("/admin/shipments", error instanceof Error ? error.message : "Shipment could not be removed."); }
   revalidatePath("/");
   revalidatePath("/admin/shipments");
   redirect("/admin/shipments?message=Shipment%20removed");
