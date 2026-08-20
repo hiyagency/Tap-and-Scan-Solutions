@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { createAdminClient } from "@/lib/supabase/admin";
+import { ensureShipmentBucket } from "@/lib/shipment-storage";
 
 export const dynamic = "force-dynamic";
 
@@ -10,6 +11,7 @@ export async function GET() {
   if (!configuredUrl || !admin) {
     return NextResponse.json({ ok: false, database: "not_configured", projectRef }, { status: 503 });
   }
+  try { await ensureShipmentBucket(admin); } catch { /* Report the named storage check below. */ }
   const [shipmentsResult, profilesResult, leadsResult, customersResult, servicesResult, duesResult, transactionsResult, bucketResult, usersResult] = await Promise.all([
     admin.from("shipments").select("id", { count: "exact", head: true }),
     admin.from("profiles").select("id", { count: "exact", head: true }),

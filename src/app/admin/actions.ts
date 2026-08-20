@@ -7,6 +7,7 @@ import { OWNER_EMAIL, ensureOwnerAccount, ensureOwnerProfile, requireOwner, crea
 import { hasPublicSupabaseConfig } from "@/lib/supabase/config";
 import { getSiteUrl } from "@/lib/site-url";
 import { createAdminClient } from "@/lib/supabase/admin";
+import { ensureShipmentBucket } from "@/lib/shipment-storage";
 
 function textValue(formData: FormData, key: string) {
   const value = formData.get(key);
@@ -249,6 +250,9 @@ export async function createShipmentAction(formData: FormData) {
   await requireOwner();
   const supabase = createAdminClient();
   if (!supabase) mutationError("/admin/shipments", "Shipment storage is not configured on this deployment.");
+  try { await ensureShipmentBucket(supabase); } catch (bucketError) {
+    mutationError("/admin/shipments", bucketError instanceof Error ? bucketError.message : "Shipment storage could not be prepared.");
+  }
   const image = formData.get("image");
   if (!(image instanceof File) || image.size === 0) mutationError("/admin/shipments", "Choose a product photo.");
   const extension = allowedShipmentTypes.get(image.type);
