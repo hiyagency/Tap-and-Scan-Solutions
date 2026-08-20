@@ -1,16 +1,16 @@
 import { ArrowRight, Plus, Search } from "lucide-react";
 import { createCustomerAction, createServiceAction, updateCustomerAction } from "@/app/admin/actions";
 import { AdminPageHeader, EmptyState, FlashMessage, StatusPill } from "@/components/admin/ui";
-import { formatInr, getAdminData, labelize } from "@/lib/admin-data";
+import { formatInr, getCustomers, labelize } from "@/lib/admin-data";
 
 type CustomersPageProps = { searchParams: Promise<{ q?: string; status?: string; message?: string; error?: string }> };
 const customerStatuses = ["active", "inactive", "archived"];
 
 export default async function CustomersPage({ searchParams }: CustomersPageProps) {
   const params = await searchParams;
-  const data = await getAdminData();
+  const customers = await getCustomers();
   const query = (params.q ?? "").toLowerCase();
-  const filtered = data.customers.filter((customer) => {
+  const filtered = customers.filter((customer) => {
     const matchesQuery = !query || [customer.name, customer.business_name, customer.phone, customer.email, customer.city].some((value) => value?.toLowerCase().includes(query));
     return matchesQuery && (!params.status || customer.status === params.status);
   });
@@ -38,7 +38,7 @@ export default async function CustomersPage({ searchParams }: CustomersPageProps
         <details className="admin-create-panel">
           <summary><Plus size={17} /> Attach a service</summary>
           <form action={createServiceAction} className="admin-form admin-form-grid">
-            <label className="full-admin-field">Customer<select name="customer_id" required><option value="">Choose customer</option>{data.customers.filter((customer) => customer.status !== "archived").map((customer) => <option key={customer.id} value={customer.id}>{customer.business_name} — {customer.name}</option>)}</select></label>
+            <label className="full-admin-field">Customer<select name="customer_id" required><option value="">Choose customer</option>{customers.filter((customer) => customer.status !== "archived").map((customer) => <option key={customer.id} value={customer.id}>{customer.business_name} — {customer.name}</option>)}</select></label>
             <label className="full-admin-field">Service<input name="service_name" placeholder="e.g. U2L.AI scan analytics" required /></label>
             <label>Billing model<select name="billing_model" defaultValue="one_time"><option value="one_time">One-time</option><option value="monthly">Monthly</option></select></label>
             <label>Agreed amount (₹)<input name="amount" type="number" min="0.01" step="0.01" required /></label>

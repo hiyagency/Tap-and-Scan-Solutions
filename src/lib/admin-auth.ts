@@ -49,7 +49,8 @@ export async function getOwnerState() {
   const user = authData.user;
   if (!user) return { configured: true as const, user: null };
 
-  const profile = await ensureOwnerProfile(user);
+  const { data: existingProfile } = await supabase.from("profiles").select("role, full_name").eq("id", user.id).maybeSingle();
+  const profile = existingProfile?.role === "owner" ? existingProfile : await ensureOwnerProfile(user);
   if (!profile || profile.role !== "owner") return { configured: true as const, user: null };
 
   return { configured: true as const, user, profile };
@@ -62,7 +63,8 @@ export async function requireOwner() {
   const { data } = await supabase.auth.getUser();
   if (!data.user) redirect("/admin/login");
 
-  const profile = await ensureOwnerProfile(data.user);
+  const { data: existingProfile } = await supabase.from("profiles").select("role").eq("id", data.user.id).maybeSingle();
+  const profile = existingProfile?.role === "owner" ? existingProfile : await ensureOwnerProfile(data.user);
   if (!profile || profile.role !== "owner") redirect("/admin/login?error=Owner%20access%20is%20required");
   return supabase;
 }

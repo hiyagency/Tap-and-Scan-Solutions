@@ -4,6 +4,9 @@ import { ArrowLeft, LockKeyhole } from "lucide-react";
 import { loginAction, resetPasswordAction } from "@/app/admin/actions";
 import { FlashMessage } from "@/components/admin/ui";
 import { hasPublicSupabaseConfig } from "@/lib/supabase/config";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = { title: "Owner login", robots: { index: false, follow: false } };
 
 type LoginPageProps = { searchParams: Promise<{ error?: string; message?: string }> };
 

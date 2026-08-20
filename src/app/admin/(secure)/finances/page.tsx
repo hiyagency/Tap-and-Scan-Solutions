@@ -1,14 +1,14 @@
 import { ArrowDownRight, ArrowRight, ArrowUpRight, Plus } from "lucide-react";
 import { createDueAction, createTransactionAction, recordPaymentAction } from "@/app/admin/actions";
 import { AdminPageHeader, EmptyState, FlashMessage, StatusPill } from "@/components/admin/ui";
-import { calculateFinanceTotals, formatInr, getAdminData, labelize } from "@/lib/admin-data";
+import { calculateFinanceTotals, formatInr, getFinanceData, labelize } from "@/lib/admin-data";
 
 type FinancePageProps = { searchParams: Promise<{ month?: string; type?: string; message?: string; error?: string }> };
 const paymentModes = ["upi", "bank_transfer", "cash", "card", "other"];
 
 export default async function FinancesPage({ searchParams }: FinancePageProps) {
   const params = await searchParams;
-  const data = await getAdminData();
+  const data = await getFinanceData();
   const currentMonth = new Date().toISOString().slice(0, 7);
   const selectedMonth = params.month ?? currentMonth;
   const totals = calculateFinanceTotals(data.transactions, data.dues, selectedMonth);
@@ -111,4 +111,3 @@ export default async function FinancesPage({ searchParams }: FinancePageProps) {
     </main>
   );
 }
-

@@ -17,6 +17,7 @@ import {
   Nfc,
   PackageCheck,
   QrCode,
+  RefreshCw,
   ShieldCheck,
   Sparkles,
   Store,
@@ -24,6 +25,7 @@ import {
 } from "lucide-react";
 import { LeadForm } from "@/components/site/lead-form";
 import { getPublishedShipments } from "@/lib/admin-data";
+import { getSiteUrl } from "@/lib/site-url";
 
 export const dynamic = "force-dynamic";
 
@@ -36,6 +38,7 @@ const services = [
   { icon: PackageCheck, title: "Acrylic stands", copy: "High-quality desk and table displays with a stable, durable and premium finish." },
   { icon: BadgeIndianRupee, title: "Low-cost replacements", copy: "Replace a damaged sticker or updated destination without rebuilding everything." },
   { icon: CreditCard, title: "Cards & custom formats", copy: "NFC cards, scanner cards and tailored solutions for unusual business workflows." },
+  { icon: RefreshCw, title: "Editable destinations", copy: "Change the Instagram handle, menu or campaign behind the QR later—without printing or buying a new QR product." },
 ];
 
 const useCases = [
@@ -61,10 +64,29 @@ const stories = [
   { tag: "Illustrative scenario · Coach", quote: "A single NFC card opens the latest course page, private learner material or a consultation booking link." },
 ];
 
+const faqItems = [
+  ["What NFC solutions are available in India?", "NFC BY ABHIGYAN creates custom NFC stands, Google review stands, NFC cards, smart QR products, restaurant menu stands and tailored tap-to-open experiences for businesses across India."],
+  ["Can the destination behind a QR code be changed later?", "Yes. The smart QR destination can be updated by the team without replacing the physical QR product. For example, an Instagram username, menu link or campaign page can change while the printed QR stays the same."],
+  ["Do NFC stands also include a QR code?", "They can. A premium NFC tap can be paired with a high-scannability QR fallback so customers can use whichever interaction works best on their phone."],
+  ["Are NFC and QR stands waterproof?", "Waterproof product options are available for restaurant tables, counters and other settings where regular handling and spills are expected."],
+  ["Can I track QR scans?", "Yes. U2L.AI tracking is built into supported smart QR setups, with optional monthly analytics for scan counts, trends and per-code performance."],
+];
+
 export default async function Home() {
   const shipments = await getPublishedShipments();
+  const siteUrl = getSiteUrl();
+  const structuredData = {
+    "@context": "https://schema.org",
+    "@graph": [
+      { "@type": "WebSite", "@id": `${siteUrl}/#website`, url: siteUrl, name: "NFC BY ABHIGYAN", inLanguage: "en-IN" },
+      { "@type": "Organization", "@id": `${siteUrl}/#organization`, name: "NFC BY ABHIGYAN", url: siteUrl, logo: `${siteUrl}/brand/tap-and-scan-logo.png`, image: `${siteUrl}/media/workshop-poster.jpg`, email: "hello@hiy.agency", telephone: "+916261565667", founder: { "@type": "Person", name: "Abhigyan Pandey" }, sameAs: ["https://instagram.com/nfcbyabhigyan", "https://hiy.agency"], areaServed: { "@type": "Country", name: "India" } },
+      { "@type": "Service", "@id": `${siteUrl}/#service`, name: "Custom NFC solutions and smart QR products", serviceType: ["Custom NFC stands", "NFC cards", "Smart editable QR codes", "QR scan analytics", "Google review NFC stands"], provider: { "@id": `${siteUrl}/#organization` }, areaServed: { "@type": "Country", name: "India" }, url: siteUrl },
+      { "@type": "FAQPage", mainEntity: faqItems.map(([name, text]) => ({ "@type": "Question", name, acceptedAnswer: { "@type": "Answer", text } })) },
+    ],
+  };
   return (
     <main>
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData).replace(/</g, "\\u003c") }} />
       <header className="site-header">
         <Link className="brand" href="#top" aria-label="NFC BY ABHIGYAN home">
           <Image src="/brand/tap-and-scan-logo.png" alt="" width={64} height={64} priority />
@@ -159,6 +181,11 @@ export default async function Home() {
             return <article key={service.title}><div><Icon aria-hidden="true" /><span>{String(index + 1).padStart(2, "0")}</span></div><h3>{service.title}</h3><p>{service.copy}</p></article>;
           })}
         </div>
+        <aside className="editable-destination">
+          <RefreshCw aria-hidden="true" />
+          <div><p className="eyebrow"><span /> One QR, even when links change</p><h3>Change the destination—not the physical product.</h3></div>
+          <p>If your Instagram username, menu, catalogue or campaign changes later, contact the team and we can update where the existing smart QR opens. There is no need to purchase and print another QR stand just because the link changed.</p>
+        </aside>
       </section>
 
       <section className="u2l-system" id="technology">
@@ -257,6 +284,16 @@ export default async function Home() {
           <div className="story-list">
             {stories.map((story) => <blockquote key={story.tag}><small>{story.tag}</small><p>“{story.quote}”</p></blockquote>)}
           </div>
+        </div>
+      </section>
+
+      <section className="seo-faq section-shell" aria-labelledby="nfc-india-heading">
+        <div className="section-heading split-heading">
+          <div><p className="eyebrow"><span /> NFC solutions in India</p><h2 id="nfc-india-heading">Built for the counter.<br />Ready for the next tap.</h2></div>
+          <p>Custom NFC stands, smart QR codes and NFC cards for restaurants, cafés, professionals, creators, retail teams and growing businesses across India.</p>
+        </div>
+        <div className="faq-grid">
+          {faqItems.map(([question, answer]) => <details key={question}><summary>{question}</summary><p>{answer}</p></details>)}
         </div>
       </section>
 

@@ -6,6 +6,7 @@ import { redirect } from "next/navigation";
 import { OWNER_EMAIL, ensureOwnerAccount, ensureOwnerProfile, requireOwner, createLoginClient } from "@/lib/admin-auth";
 import { hasPublicSupabaseConfig } from "@/lib/supabase/config";
 import { getSiteUrl } from "@/lib/site-url";
+import { createAdminClient } from "@/lib/supabase/admin";
 
 function textValue(formData: FormData, key: string) {
   const value = formData.get(key);
@@ -245,18 +246,20 @@ const allowedShipmentTypes = new Map([
 ]);
 
 export async function createShipmentAction(formData: FormData) {
-  const supabase = await requireOwner();
+  await requireOwner();
+  const supabase = createAdminClient();
+  if (!supabase) mutationError("/admin/shipments", "Shipment storage is not configured on this deployment.");
   const image = formData.get("image");
   if (!(image instanceof File) || image.size === 0) mutationError("/admin/shipments", "Choose a product photo.");
   const extension = allowedShipmentTypes.get(image.type);
   if (!extension) mutationError("/admin/shipments", "Upload a JPG, PNG, WebP or AVIF image.");
-  if (image.size > 10 * 1024 * 1024) mutationError("/admin/shipments", "Image must be 10 MB or smaller.");
+  if (image.size > 5 * 1024 * 1024) mutationError("/admin/shipments", "Image must be 5 MB or smaller.");
 
   const title = textValue(formData, "title");
   const altText = textValue(formData, "alt_text");
   if (title.length < 2 || altText.length < 5) mutationError("/admin/shipments", "Add a clear title and image description.");
   const imagePath = `${new Date().toISOString().slice(0, 10)}/${randomUUID()}.${extension}`;
-  const { error: uploadError } = await supabase.storage.from("shipments").upload(imagePath, image, { contentType: image.type, upsert: false });
+  const { error: uploadError } = await supabase.storage.from("shipments").upload(imagePath, await image.arrayBuffer(), { cacheControl: "31536000", contentType: image.type, upsert: false });
   if (uploadError) mutationError("/admin/shipments", uploadError.message);
 
   const { error: insertError } = await supabase.from("shipments").insert({
@@ -279,16 +282,21 @@ export async function createShipmentAction(formData: FormData) {
 }
 
 export async function updateShipmentAction(formData: FormData) {
-  const supabase = await requireOwner();
+  await requireOwner();
+  const supabase = createAdminClient();
+  if (!supabase) mutationError("/admin/shipments", "Shipment storage is not configured on this deployment.");
   const id = textValue(formData, "id");
   const { error } = await supabase.from("shipments").update({ published: formData.get("published") === "on" }).eq("id", id);
   if (error) mutationError("/admin/shipments", error.message);
   revalidatePath("/");
   revalidatePath("/admin/shipments");
+  redirect("/admin/shipments?message=Shipment%20visibility%20updated");
 }
 
 export async function deleteShipmentAction(formData: FormData) {
-  const supabase = await requireOwner();
+  await requireOwner();
+  const supabase = createAdminClient();
+  if (!supabase) mutationError("/admin/shipments", "Shipment storage is not configured on this deployment.");
   const id = textValue(formData, "id");
   const { data, error: readError } = await supabase.from("shipments").select("image_path").eq("id", id).single();
   if (readError || !data) mutationError("/admin/shipments", readError?.message ?? "Shipment not found.");

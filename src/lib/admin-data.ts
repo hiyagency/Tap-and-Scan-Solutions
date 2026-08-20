@@ -29,6 +29,36 @@ export async function getAdminData(): Promise<AdminData> {
   return { leads: (leadsResult.data ?? []) as LeadRow[], customers: (customersResult.data ?? []) as CustomerRow[], dues: (duesResult.data ?? []) as DueRow[], transactions: (transactionsResult.data ?? []) as TransactionRow[] };
 }
 
+export async function getLeads(): Promise<LeadRow[]> {
+  const supabase = await createClient();
+  const { data, error } = await supabase.from("leads").select("*").order("created_at", { ascending: false });
+  if (error) throw new Error(error.message);
+  return (data ?? []) as LeadRow[];
+}
+
+export async function getCustomers(): Promise<CustomerRow[]> {
+  const supabase = await createClient();
+  const { data, error } = await supabase.from("customers").select("*, customer_services(*)").order("onboarding_date", { ascending: false });
+  if (error) throw new Error(error.message);
+  return (data ?? []) as CustomerRow[];
+}
+
+export async function getFinanceData(): Promise<Pick<AdminData, "customers" | "dues" | "transactions">> {
+  const supabase = await createClient();
+  const [customersResult, duesResult, transactionsResult] = await Promise.all([
+    supabase.from("customers").select("*, customer_services(*)").order("onboarding_date", { ascending: false }),
+    supabase.from("dues").select("*, customers(name, business_name)").order("due_date", { ascending: true }),
+    supabase.from("transactions").select("*, customers(name, business_name)").order("occurred_on", { ascending: false }),
+  ]);
+  const firstError = customersResult.error ?? duesResult.error ?? transactionsResult.error;
+  if (firstError) throw new Error(firstError.message);
+  return {
+    customers: (customersResult.data ?? []) as CustomerRow[],
+    dues: (duesResult.data ?? []) as DueRow[],
+    transactions: (transactionsResult.data ?? []) as TransactionRow[],
+  };
+}
+
 function withShipmentUrl<T extends Omit<ShipmentRow, "image_url">>(shipment: T, baseUrl: string): ShipmentRow {
   return { ...shipment, image_url: `${baseUrl}/storage/v1/object/public/shipments/${shipment.image_path}` };
 }

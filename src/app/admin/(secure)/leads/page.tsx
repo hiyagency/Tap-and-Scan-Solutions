@@ -1,7 +1,7 @@
 import { ArrowRight, Plus, Search } from "lucide-react";
 import { convertLeadAction, createLeadAction, updateLeadAction } from "@/app/admin/actions";
 import { AdminPageHeader, EmptyState, FlashMessage, StatusPill } from "@/components/admin/ui";
-import { getAdminData, labelize } from "@/lib/admin-data";
+import { getLeads, labelize } from "@/lib/admin-data";
 
 type LeadsPageProps = { searchParams: Promise<{ q?: string; status?: string; message?: string; error?: string }> };
 
@@ -10,9 +10,9 @@ const interestOptions = ["Smart QR", "Waterproof product", "NFC tags or cards", 
 
 export default async function LeadsPage({ searchParams }: LeadsPageProps) {
   const params = await searchParams;
-  const data = await getAdminData();
+  const leads = await getLeads();
   const query = (params.q ?? "").toLowerCase();
-  const filtered = data.leads.filter((lead) => {
+  const filtered = leads.filter((lead) => {
     const matchesQuery = !query || [lead.name, lead.business_name, lead.phone, lead.email, lead.city].some((value) => value?.toLowerCase().includes(query));
     return matchesQuery && (!params.status || lead.status === params.status);
   });
@@ -22,7 +22,7 @@ export default async function LeadsPage({ searchParams }: LeadsPageProps) {
       <AdminPageHeader eyebrow="Enquiry pipeline" title="Every lead, with a next step." copy="Capture enquiries from the website or add conversations manually, then move them through one consistent pipeline." />
       <FlashMessage message={params.message} error={params.error} />
 
-      <details className="admin-create-panel" open={data.leads.length === 0}>
+      <details className="admin-create-panel" open={leads.length === 0}>
         <summary><Plus size={17} /> Add a lead manually</summary>
         <form action={createLeadAction} className="admin-form admin-form-grid">
           <label>Name<input name="name" required /></label>

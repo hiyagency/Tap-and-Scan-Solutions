@@ -1,7 +1,8 @@
 import Image from "next/image";
-import { Camera, Eye, EyeOff, Trash2, Upload } from "lucide-react";
-import { createShipmentAction, deleteShipmentAction, updateShipmentAction } from "@/app/admin/actions";
+import { Eye, EyeOff, Trash2 } from "lucide-react";
+import { deleteShipmentAction, updateShipmentAction } from "@/app/admin/actions";
 import { AdminPageHeader, EmptyState, FlashMessage } from "@/components/admin/ui";
+import { ShipmentUploadForm } from "@/components/admin/shipment-upload-form";
 import { getAdminShipments } from "@/lib/admin-data";
 
 type PageProps = { searchParams: Promise<{ error?: string; message?: string }> };
@@ -9,23 +10,10 @@ type PageProps = { searchParams: Promise<{ error?: string; message?: string }> }
 export default async function ShipmentsPage({ searchParams }: PageProps) {
   const [params, shipments] = await Promise.all([searchParams, getAdminShipments()]);
   return (
-    <main className="admin-page">
+    <main className="admin-main admin-page">
       <AdminPageHeader eyebrow="Public proof" title="Products shipped" copy="Take a photo or choose one from your phone. Published items appear on the public website immediately." />
       <FlashMessage message={params.message} error={params.error} />
-      <section className="admin-panel shipment-upload-panel">
-        <div className="panel-title"><div><p className="eyebrow">New shipment</p><h2>Publish today’s build</h2></div><Camera size={24} /></div>
-        <form action={createShipmentAction} className="admin-form shipment-form">
-          <label className="shipment-file full-admin-field"><span><Upload size={18} /> Product photo</span><input name="image" type="file" accept="image/jpeg,image/png,image/webp,image/avif" capture="environment" required /><small>Use camera on mobile or choose a file · max 10 MB</small></label>
-          <label>Product title<input name="title" placeholder="Custom NFC review stand" required minLength={2} maxLength={120} /></label>
-          <label>Business name<input name="business_name" placeholder="Optional" /></label>
-          <label>City<input name="city" placeholder="e.g. Bhopal" /></label>
-          <label>Shipped on<input name="shipped_on" type="date" defaultValue={new Date().toISOString().slice(0, 10)} required /></label>
-          <label className="full-admin-field">Accessible image description<input name="alt_text" placeholder="Black acrylic QR and NFC stand ready for dispatch" required minLength={5} maxLength={180} /></label>
-          <label className="full-admin-field">Caption<textarea name="caption" rows={3} placeholder="Optional build details" /></label>
-          <label className="admin-toggle full-admin-field"><input name="published" type="checkbox" defaultChecked /> Show on public website now</label>
-          <button className="button button-dark" type="submit">Upload shipment</button>
-        </form>
-      </section>
+      <ShipmentUploadForm />
 
       <section className="admin-panel">
         <div className="panel-title"><div><p className="eyebrow">Archive</p><h2>{shipments.length} shipped product{shipments.length === 1 ? "" : "s"}</h2></div></div>
