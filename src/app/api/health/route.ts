@@ -21,9 +21,13 @@ export async function GET() {
     admin.storage.getBucket("shipments"),
     admin.auth.admin.listUsers({ page: 1, perPage: 1000 }),
   ]);
-  const schemaError = shipmentsResult.error || profilesResult.error || leadsResult.error || customersResult.error || servicesResult.error || duesResult.error || transactionsResult.error;
-  if (schemaError || bucketResult.error || usersResult.error) {
-    return NextResponse.json({ ok: false, database: "schema_incomplete", projectRef }, { status: 503 });
+  const failedChecks = [
+    ["shipments", shipmentsResult.error], ["profiles", profilesResult.error], ["leads", leadsResult.error],
+    ["customers", customersResult.error], ["customer_services", servicesResult.error], ["dues", duesResult.error],
+    ["transactions", transactionsResult.error], ["shipment_storage", bucketResult.error], ["auth", usersResult.error],
+  ].filter(([, error]) => Boolean(error)).map(([name]) => name);
+  if (failedChecks.length) {
+    return NextResponse.json({ ok: false, database: "schema_incomplete", failedChecks, projectRef }, { status: 503 });
   }
   const ownerUser = usersResult.data.users.find((user) => user.email?.toLowerCase() === "hello@hiy.agency");
   const ownerProfile = ownerUser
