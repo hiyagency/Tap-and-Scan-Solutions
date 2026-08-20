@@ -1,13 +1,14 @@
 import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
-import { hasPublicSupabaseConfig } from "./config";
+import { getPublicSupabaseConfig, hasPublicSupabaseConfig } from "./config";
 
 export async function updateSession(request: NextRequest) {
   if (!hasPublicSupabaseConfig()) return NextResponse.next({ request });
+  const { url, publishableKey } = getPublicSupabaseConfig();
   let response = NextResponse.next({ request });
   const supabase = createServerClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY!,
+    url,
+    publishableKey,
     {
       cookies: {
         getAll: () => request.cookies.getAll(),
@@ -22,4 +23,3 @@ export async function updateSession(request: NextRequest) {
   await supabase.auth.getClaims();
   return response;
 }
-

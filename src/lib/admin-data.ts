@@ -1,7 +1,7 @@
 import "server-only";
 
 import { createAdminClient } from "@/lib/supabase/admin";
-import { createClient } from "@/lib/supabase/server";
+import { requireOwner } from "@/lib/admin-auth";
 export { calculateFinanceTotals } from "@/lib/finance";
 
 export type LeadStatus = "new" | "contacted" | "qualified" | "quoted" | "won" | "lost";
@@ -16,8 +16,15 @@ export type TransactionRow = { id: string; type: "income" | "expense"; category:
 export type ShipmentRow = { id: string; title: string; business_name: string | null; city: string | null; caption: string | null; alt_text: string; image_path: string; shipped_on: string; published: boolean; sort_order: number; created_at: string; image_url: string };
 export type AdminData = { leads: LeadRow[]; customers: CustomerRow[]; dues: DueRow[]; transactions: TransactionRow[] };
 
+async function getAuthorizedAdminClient() {
+  await requireOwner();
+  const admin = createAdminClient();
+  if (!admin) throw new Error("The server database connection is unavailable.");
+  return admin;
+}
+
 export async function getAdminData(): Promise<AdminData> {
-  const supabase = await createClient();
+  const supabase = await getAuthorizedAdminClient();
   const [leadsResult, customersResult, duesResult, transactionsResult] = await Promise.all([
     supabase.from("leads").select("*").order("created_at", { ascending: false }),
     supabase.from("customers").select("*, customer_services(*)").order("onboarding_date", { ascending: false }),
@@ -30,21 +37,21 @@ export async function getAdminData(): Promise<AdminData> {
 }
 
 export async function getLeads(): Promise<LeadRow[]> {
-  const supabase = await createClient();
+  const supabase = await getAuthorizedAdminClient();
   const { data, error } = await supabase.from("leads").select("*").order("created_at", { ascending: false });
   if (error) throw new Error(error.message);
   return (data ?? []) as LeadRow[];
 }
 
 export async function getCustomers(): Promise<CustomerRow[]> {
-  const supabase = await createClient();
+  const supabase = await getAuthorizedAdminClient();
   const { data, error } = await supabase.from("customers").select("*, customer_services(*)").order("onboarding_date", { ascending: false });
   if (error) throw new Error(error.message);
   return (data ?? []) as CustomerRow[];
 }
 
 export async function getFinanceData(): Promise<Pick<AdminData, "customers" | "dues" | "transactions">> {
-  const supabase = await createClient();
+  const supabase = await getAuthorizedAdminClient();
   const [customersResult, duesResult, transactionsResult] = await Promise.all([
     supabase.from("customers").select("*, customer_services(*)").order("onboarding_date", { ascending: false }),
     supabase.from("dues").select("*, customers(name, business_name)").order("due_date", { ascending: true }),
@@ -64,7 +71,7 @@ function withShipmentUrl<T extends Omit<ShipmentRow, "image_url">>(shipment: T, 
 }
 
 export async function getAdminShipments(): Promise<ShipmentRow[]> {
-  const supabase = await createClient();
+  const supabase = await getAuthorizedAdminClient();
   const { data, error } = await supabase.from("shipments").select("*").order("shipped_on", { ascending: false }).order("sort_order", { ascending: false });
   if (error) throw new Error(error.message);
   const baseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;

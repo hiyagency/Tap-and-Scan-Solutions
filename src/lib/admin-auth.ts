@@ -2,11 +2,22 @@ import "server-only";
 
 import { redirect } from "next/navigation";
 import type { User } from "@supabase/supabase-js";
+import { cache } from "react";
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { hasPublicSupabaseConfig } from "@/lib/supabase/config";
 
 export const OWNER_EMAIL = "hello@hiy.agency";
+
+const getVerifiedOwner = cache(async () => {
+  if (!hasPublicSupabaseConfig()) return { configured: false as const, user: null, supabase: null };
+  const supabase = await createClient();
+  const { data, error } = await supabase.auth.getClaims();
+  const email = typeof data?.claims?.email === "string" ? data.claims.email.toLowerCase() : null;
+  const subject = typeof data?.claims?.sub === "string" ? data.claims.sub : null;
+  if (error || email !== OWNER_EMAIL || !subject) return { configured: true as const, user: null, supabase };
+  return { configured: true as const, user: { id: subject, email }, supabase };
+});
 
 export async function ensureOwnerProfile(user: User) {
   if (user.email?.toLowerCase() !== OWNER_EMAIL) return null;
@@ -42,31 +53,16 @@ export async function ensureOwnerAccount() {
 }
 
 export async function getOwnerState() {
-  if (!hasPublicSupabaseConfig()) return { configured: false as const, user: null };
-  const supabase = await createClient();
-
-  const { data: authData } = await supabase.auth.getUser();
-  const user = authData.user;
-  if (!user) return { configured: true as const, user: null };
-
-  const { data: existingProfile } = await supabase.from("profiles").select("role, full_name").eq("id", user.id).maybeSingle();
-  const profile = existingProfile?.role === "owner" ? existingProfile : await ensureOwnerProfile(user);
-  if (!profile || profile.role !== "owner") return { configured: true as const, user: null };
-
-  return { configured: true as const, user, profile };
+  const state = await getVerifiedOwner();
+  if (!state.configured || !state.user) return { configured: state.configured, user: null };
+  return { configured: true as const, user: state.user, profile: { role: "owner", full_name: "Abhigyan Pandey" } };
 }
 
 export async function requireOwner() {
-  if (!hasPublicSupabaseConfig()) redirect("/admin/login?error=Supabase%20configuration%20is%20missing");
-  const supabase = await createClient();
-
-  const { data } = await supabase.auth.getUser();
-  if (!data.user) redirect("/admin/login");
-
-  const { data: existingProfile } = await supabase.from("profiles").select("role").eq("id", data.user.id).maybeSingle();
-  const profile = existingProfile?.role === "owner" ? existingProfile : await ensureOwnerProfile(data.user);
-  if (!profile || profile.role !== "owner") redirect("/admin/login?error=Owner%20access%20is%20required");
-  return supabase;
+  const state = await getVerifiedOwner();
+  if (!state.configured) redirect("/admin/login?error=Supabase%20configuration%20is%20missing");
+  if (!state.user || !state.supabase) redirect("/admin/login");
+  return state.supabase;
 }
 
 export async function createLoginClient() {
