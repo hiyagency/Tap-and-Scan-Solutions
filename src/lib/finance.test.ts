@@ -20,4 +20,20 @@ describe("calculateFinanceTotals", () => {
     ], "2026-08");
     expect(result.outstanding).toBe(175_000);
   });
+
+  it("calculates lifetime income with open dues and lifetime cash flow without double-counting dues", () => {
+    const result = calculateFinanceTotals([
+      { type: "income", amount_paise: 150_000, occurred_on: "2026-07-02" },
+      { type: "income", amount_paise: 75_000, occurred_on: "2026-08-03" },
+      { type: "expense", amount_paise: 40_000, occurred_on: "2026-06-10" },
+      { type: "expense", amount_paise: 10_000, occurred_on: "2026-08-05" },
+    ], [
+      { status: "partial", amount_paise: 100_000, paid_amount_paise: 60_000 },
+      { status: "paid", amount_paise: 75_000, paid_amount_paise: 75_000 },
+      { status: "cancelled", amount_paise: 50_000, paid_amount_paise: 0 },
+    ], "2026-08");
+
+    expect(result.lifetimeIncome).toBe(265_000);
+    expect(result.lifetimeCashFlow).toBe(175_000);
+  });
 });

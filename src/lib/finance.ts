@@ -5,9 +5,22 @@ export function calculateFinanceTotals(transactions: FinanceTransaction[], dues:
   const monthTransactions = transactions.filter((transaction) => transaction.occurred_on.startsWith(month));
   const income = monthTransactions.filter((item) => item.type === "income").reduce((sum, item) => sum + item.amount_paise, 0);
   const expenses = monthTransactions.filter((item) => item.type === "expense").reduce((sum, item) => sum + item.amount_paise, 0);
+  const lifetimeRecordedIncome = transactions
+    .filter((item) => item.type === "income")
+    .reduce((sum, item) => sum + item.amount_paise, 0);
+  const lifetimeExpenses = transactions
+    .filter((item) => item.type === "expense")
+    .reduce((sum, item) => sum + item.amount_paise, 0);
   const outstanding = dues
     .filter((due) => !["paid", "cancelled"].includes(due.status))
-    .reduce((sum, due) => sum + due.amount_paise - due.paid_amount_paise, 0);
-  return { income, expenses, net: income - expenses, outstanding };
-}
+    .reduce((sum, due) => sum + Math.max(due.amount_paise - due.paid_amount_paise, 0), 0);
 
+  return {
+    income,
+    expenses,
+    net: income - expenses,
+    outstanding,
+    lifetimeIncome: lifetimeRecordedIncome + outstanding,
+    lifetimeCashFlow: lifetimeRecordedIncome - lifetimeExpenses,
+  };
+}

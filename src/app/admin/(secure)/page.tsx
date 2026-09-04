@@ -20,6 +20,8 @@ export default async function AdminDashboard() {
     { label: "New leads", value: String(newLeads), hint: "this month", icon: UserRoundPlus },
     { label: "Conversion rate", value: `${conversionRate}%`, hint: "won / resolved", icon: UserRoundCheck },
     { label: "Active customers", value: String(activeCustomers), hint: "current accounts", icon: WalletCards },
+    { label: "Lifetime income", value: formatInr(finance.lifetimeIncome), hint: "received income + open dues", icon: TrendingUp },
+    { label: "Lifetime cash flow", value: formatInr(finance.lifetimeCashFlow), hint: "all income − all expenses", icon: IndianRupee },
     { label: "Monthly income", value: formatInr(finance.income), hint: "recorded cash-in", icon: TrendingUp },
     { label: "Monthly expenses", value: formatInr(finance.expenses), hint: "recorded cash-out", icon: TrendingDown },
     { label: "Net cash flow", value: formatInr(finance.net), hint: "income − expense", icon: IndianRupee },
@@ -88,4 +90,3 @@ export default async function AdminDashboard() {
     </main>
   );
 }
-
