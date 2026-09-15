@@ -4,7 +4,11 @@ const VCARD = [
   "FN:Kadam Shoe",
   "N:Kadam Shoe;;;;",
   "ORG:Kadam Shoe",
-  "TEL;TYPE=CELL:+919109167827",
+  "TEL;TYPE=CELL:+916263267366",
+  "ADR;TYPE=WORK:;;INFRONT OF GOVERNMENT HOSPITAL BURHAR;;;;",
+  "LABEL;TYPE=WORK:INFRONT OF GOVERNMENT HOSPITAL BURHAR",
+  "URL:https://www.instagram.com/kadamshoemart",
+  "X-SOCIALPROFILE;TYPE=instagram:https://www.instagram.com/kadamshoemart",
   "END:VCARD",
   "",
 ].join("\r\n");
