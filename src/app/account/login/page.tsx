@@ -1,0 +1,4 @@
+import { ShopShell } from "@/components/shop/shell";
+import { GoogleButton } from "@/components/shop/google-button";
+export const metadata={title:"Sign in",robots:{index:false,follow:false}};
+export default async function Login({searchParams}:{searchParams:Promise<{next?:string;error?:string}>}){const q=await searchParams;return <ShopShell><main id="shop-main" className="shop-page"><div className="auth-card"><p className="shop-eyebrow">YOUR CONNECTIONS, TOGETHER</p><h1>Welcome to your account.</h1><p>Sign in with Google to checkout and follow your order from design approval to your doorstep.</p>{q.error&&<p role="alert" className="shop-error">{q.error}</p>}<GoogleButton next={q.next==="/checkout"?"/checkout":"/account/orders"}/><p>No new password to remember.</p></div></main></ShopShell>;}

@@ -11,6 +11,7 @@
     "test": "vitest run"
   },
   "dependencies": {
+    "@remotion/player": "4.0.506",
     "@supabase/ssr": "^0.12.4",
     "@supabase/supabase-js": "^2.112.3",
     "clsx": "^2.1.1",
@@ -19,6 +20,7 @@
     "next": "16.3.1",
     "react": "19.2.8",
     "react-dom": "19.2.8",
+    "remotion": "4.0.506",
     "zod": "^4.4.3"
   },
   "devDependencies": {

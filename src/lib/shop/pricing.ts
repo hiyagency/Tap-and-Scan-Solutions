@@ -1,0 +1,4 @@
+import type { Product } from "./catalogue";
+import type { CartItem } from "./validation";
+export function priceItems(items:CartItem[],products:Product[]){let subtotal=0,quantity=0;const rows=items.map(i=>{const p=products.find(p=>p.slug===i.productSlug&&p.active);const v=p?.variants.find(v=>v.id===i.variantId&&v.available);if(!p||!v)throw new Error("An item in your bag is no longer available.");if(v.price_paise===null||!Number.isSafeInteger(v.price_paise)||v.price_paise<=0)throw new Error("Pricing is not available yet.");if(!Number.isInteger(i.quantity)||i.quantity<1||i.quantity>50)throw new Error("Invalid quantity.");subtotal+=v.price_paise*i.quantity;quantity+=i.quantity;return {product_slug:p.slug,variant_id:v.id,name:p.name,variant_name:v.name,image:v.image,quantity:i.quantity,price_paise:v.price_paise,asset_id:i.logoId||null};});if(!Number.isSafeInteger(subtotal)||subtotal<=0)throw new Error("Invalid order total.");return {rows,subtotal,quantity};}
+

@@ -1,0 +1,10 @@
+import { redirect,notFound } from "next/navigation";
+import { ShopShell } from "@/components/shop/shell";
+import { customerSession,ownedOrder } from "@/lib/shop/server";
+import { priceLabel } from "@/lib/shop/catalogue";
+import { RefreshOrder } from "@/components/shop/refresh-order";
+export const metadata={title:"Order details",robots:{index:false,follow:false}};
+export default async function OrderPage({params}:{params:Promise<{id:string}>}){const user=await customerSession();if(!user)redirect("/account/login");const {id}=await params;const order=await ownedOrder(id,user.id);if(!order)notFound();const shipment=Array.isArray(order.shop_fulfilments)?order.shop_fulfilments[0]:order.shop_fulfilments;
+ return <ShopShell><main id="shop-main" className="shop-page"><p className="shop-eyebrow">YOUR ORDER</p><h1 className="shop-page-title">{order.reference}</h1><div className="cart-layout"><div><p>Payment: {order.payment_status.replaceAll("_"," ")} · {priceLabel(order.total_paise)}</p>{order.shop_order_items.map((i:{id:string;name:string;variant_name:string;quantity:number;asset_id:string|null})=><article className="account-order" key={i.id}><h2>{i.name}</h2><p>{i.variant_name} · Quantity {i.quantity}</p>{i.asset_id&&<a href={"/api/shop/assets/"+i.asset_id}>Download your logo</a>}</article>)}<h2>Order progress</h2><ol className="order-timeline">{order.shop_order_events.map((e:{id:string;label:string;created_at:string})=><li key={e.id}>{e.label}<br/><small>{new Date(e.created_at).toLocaleString("en-IN")}</small></li>)}</ol></div><aside className="order-summary"><h2>Delivery updates</h2><p>{shipment?.awb?"Tracking number: "+shipment.awb:"Tracking will appear once your approved design is produced and shipped."}</p>{shipment?.tracking&&<><p>{shipment.tracking.status}</p><p>Expected: {shipment.tracking.expected||"Awaiting carrier update"}</p><p>Last checked: {new Date(shipment.checked_at).toLocaleString("en-IN")}</p></>}<RefreshOrder id={id} paid={order.payment_status!=="pending"} shipped={!!shipment?.awb}/><p>Need help? <a href="https://wa.me/919109167827">Message our team</a></p></aside></div></main></ShopShell>;
+}
+

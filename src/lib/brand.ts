@@ -1,0 +1,1 @@
+export const brand={name:"NFC.HIY",byline:"powered by HIY AGENCY",instagram:"https://www.instagram.com/nfc.hiy",email:"hello@hiy.agency",supportDisplay:"+91 9109167827",supportPhone:"+919109167827",supportHours:"10am–10pm IST",logo:"/brand/nfc-hiy.webp"};

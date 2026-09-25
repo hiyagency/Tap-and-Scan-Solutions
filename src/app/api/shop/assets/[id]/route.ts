@@ -1,0 +1,4 @@
+import { apiError,commerceDb,customerSession } from "@/lib/shop/server";
+import { getOwnerState } from "@/lib/admin-auth";
+export async function GET(_req:Request,{params}:{params:Promise<{id:string}>}){try{const {id}=await params;const user=await customerSession();const owner=await getOwnerState();if(!user&&!owner.user)return Response.json({error:"Sign in required"},{status:401});let query=commerceDb().from("shop_assets").select("path").eq("id",id).eq("verified",true);if(!owner.user)query=query.eq("user_id",user!.id);const {data}=await query.maybeSingle();if(!data)return Response.json({error:"Not found"},{status:404});const {data:signed,error}=await commerceDb().storage.from("order-logos").createSignedUrl(data.path,60,{download:true});if(error||!signed)throw new Error("Download unavailable.");return Response.redirect(signed.signedUrl,302);}catch(e){return apiError(e);}}
+
