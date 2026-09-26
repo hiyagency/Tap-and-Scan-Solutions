@@ -18,11 +18,11 @@ describe("Card pricing and tax", () => {
 });
 describe("NimbusPost rates", () => {
   it("uses the cheapest valid total or configured carrier", () => {
-    const rates=[{id:"1",name:"Courier A",total_charges:75.52},{id:"2",name:"Courier B",total_charges:"61.36"}];
+    const rates=[{courierId:"1",courierName:"Courier A",result:{totalPaise:7552}},{courierId:"2",courierName:"Courier B",result:{totalPaise:6136}}];
     expect(selectRate(rates).amount).toBe(6136);
     expect(selectRate(rates,"1").amount).toBe(7552);
   });
   it("does not silently turn missing or invalid quotes into free shipping", () => {
-    for(const rates of [[],null,[{id:"1",name:"X",total_charges:null}],[{id:"1",name:"X",total_charges:0}],[{id:"1",name:"X",total_charges:-5}]]) expect(()=>selectRate(rates)).toThrow();
+    for(const rates of [[],null,...[null,0,-5,1.2,"5000",Infinity].map(totalPaise=>[{courierId:"1",courierName:"X",result:{totalPaise}}])]) expect(()=>selectRate(rates)).toThrow();
   });
 });
