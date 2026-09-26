@@ -11,7 +11,7 @@ export default function PrivacyPage() {
       <article>
         <p className="eyebrow"><span /> Privacy</p>
         <h1>Your information, handled with care.</h1>
-        <h2>Shopping and customer accounts</h2><p>Google sign-in provides your name, email and account identifier. We use your contact details, shipping address, order details and optional PNG logo to process your order, arrange delivery and contact you on WhatsApp about design approval. PayU processes payments; we do not store your card details. iThink Logistics receives the delivery information needed to quote and fulfil shipments.</p>
+        <h2>Shopping and customer accounts</h2><p>Google sign-in provides your name, email and account identifier. We use your contact details, shipping address, order details and optional PNG logo to process your order, arrange delivery and contact you on WhatsApp about design approval. PayU processes payments; we do not store your card details. NimbusPost receives the delivery information needed to quote and fulfil shipments.</p>
         <h2>Logo files and your shopping bag</h2><p>Your bag and selected logo drafts are saved in your browser until checkout. Submitted logos are stored privately and are accessible to the owner and the customer who supplied them. Temporary download links expire. Contact us to request removal of files that are no longer needed for an order.</p>
         <p>When you submit an enquiry, NFC.HIY stores the contact and project information you provide so we can respond, prepare a quotation and maintain an enquiry history.</p>
         <h2>What we collect</h2><p>Name, business name, phone or WhatsApp number, optional email and city, product interests, timeline, quantity and any message you provide.</p>

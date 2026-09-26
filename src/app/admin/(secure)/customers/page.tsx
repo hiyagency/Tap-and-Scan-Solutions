@@ -2,6 +2,7 @@ import { ArrowRight, Plus, Search } from "lucide-react";
 import { createCustomerAction, createServiceAction, updateCustomerAction } from "@/app/admin/actions";
 import { AdminPageHeader, EmptyState, FlashMessage, StatusPill } from "@/components/admin/ui";
 import { formatInr, getCustomers, labelize } from "@/lib/admin-data";
+import { getCustomerOrderTotals } from "@/lib/admin-orders";
 
 type CustomersPageProps = { searchParams: Promise<{ q?: string; status?: string; message?: string; error?: string }> };
 const customerStatuses = ["active", "inactive", "archived"];
@@ -9,6 +10,7 @@ const customerStatuses = ["active", "inactive", "archived"];
 export default async function CustomersPage({ searchParams }: CustomersPageProps) {
   const params = await searchParams;
   const customers = await getCustomers();
+  const orderTotals = await getCustomerOrderTotals(customers.map(customer => customer.id));
   const query = (params.q ?? "").toLowerCase();
   const filtered = customers.filter((customer) => {
     const matchesQuery = !query || [customer.name, customer.business_name, customer.phone, customer.email, customer.city].some((value) => value?.toLowerCase().includes(query));
@@ -65,6 +67,7 @@ export default async function CustomersPage({ searchParams }: CustomersPageProps
                 <StatusPill value={customer.status} />
               </div>
               <div className="customer-contact"><a href={`tel:${customer.phone}`}>{customer.phone}</a>{customer.email ? <a href={`mailto:${customer.email}`}>{customer.email}</a> : null}</div>
+              <p className="customer-order-totals">{orderTotals[customer.id]?.order_count || 0} online orders · {formatInr(orderTotals[customer.id]?.total_spent || 0)} spent{orderTotals[customer.id]?.latest_order ? ` · Latest ${new Date(orderTotals[customer.id].latest_order).toLocaleDateString("en-IN", { timeZone: "Asia/Kolkata" })}` : ""}</p>
 
               <div className="services-list">
                 <p className="eyebrow">Services</p>

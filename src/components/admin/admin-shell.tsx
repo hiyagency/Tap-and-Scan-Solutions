@@ -1,6 +1,8 @@
 import Image from "next/image";
 import Link from "next/link";
-import { CircleDollarSign, Images, LayoutDashboard, LogOut, UsersRound, UserRoundPlus, ShoppingBag, Package } from "lucide-react";
+import { CircleDollarSign, Images, LayoutDashboard, LogOut, UsersRound, UserRoundPlus, ShoppingBag, Package, Settings, ChartNoAxesCombined } from "lucide-react";
+import { MobileAdminNav } from "./mobile-nav";
+import { OrderLiveStatus } from "./order-realtime";
 import { logoutAction } from "@/app/admin/actions";
 
 const links = [
@@ -11,6 +13,8 @@ const links = [
   { href: "/admin/customers", label: "Customers", icon: UsersRound },
   { href: "/admin/finances", label: "Finances", icon: CircleDollarSign },
   { href: "/admin/shipments", label: "Shipped products", icon: Images },
+  { href: "/admin/business", label: "Business overview", icon: ChartNoAxesCombined },
+  { href: "/admin/settings", label: "Settings", icon: Settings },
 ];
 
 export function AdminShell({ children }: { children: React.ReactNode }) {
@@ -33,7 +37,8 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
           </form>
         </div>
       </aside>
-      <div className="admin-workspace">{children}</div>
+      <div className="admin-workspace"><OrderLiveStatus/>{children}</div>
+      <MobileAdminNav/>
     </div>
   );
 }

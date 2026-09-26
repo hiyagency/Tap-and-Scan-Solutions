@@ -1,6 +1,15 @@
 import Link from "next/link";
-import { AdminPageHeader } from "@/components/admin/ui";
-import { commerceDb } from "@/lib/shop/server";
-import { priceLabel } from "@/lib/shop/catalogue";
-import { requireOwner } from "@/lib/admin-auth";
-export default async function AdminOrders({searchParams}:{searchParams:Promise<{q?:string;stage?:string}>}){await requireOwner();const {q="",stage=""}=await searchParams;let query=commerceDb().from("shop_orders").select("id,reference,email,address,total_paise,payment_status,stage,created_at").order("created_at",{ascending:false}).limit(100);if(stage)query=query.eq("stage",stage);if(q)query=query.ilike("reference","%"+q.replace(/[%_]/g,"")+"%");const {data,error}=await query;return <main className="admin-main"><AdminPageHeader eyebrow="Online shop" title="Orders." copy="Payment, design approval and shipping in one place. Customer logos stay private."/>{error?<p className="commerce-notice">Order management will be available after the commerce migration is applied. Existing CRM records are unaffected.</p>:<><form className="commerce-admin-form"><label>Order reference<input name="q" defaultValue={q} placeholder="NFC-…"/></label><label>Stage<select name="stage" defaultValue={stage}><option value="">All stages</option>{["awaiting_payment","awaiting_design","design_approved","production","ready_to_ship","shipped","delivered"].map(s=><option key={s} value={s}>{s.replaceAll("_"," ")}</option>)}</select></label><button>Filter orders</button></form><div className="commerce-admin-list">{!data?.length&&<p>No orders yet.</p>}{data?.map(o=><article key={o.id}><h2><Link href={"/admin/orders/"+o.id}>{o.reference} →</Link></h2><p>{o.address.name} · {o.email}</p><p>{o.stage.replaceAll("_"," ")} · Payment: {o.payment_status}</p><strong>{priceLabel(o.total_paise)}</strong></article>)}</div></>}</main>;}
+import { getOrders, ORDER_PAGE_SIZE } from "@/lib/admin-orders";
+import { stageLabels, type OrderFilters } from "@/lib/order-types";
+import { OrderList } from "@/components/admin/order-list";
+export default async function AdminOrders({ searchParams }: { searchParams: Promise<OrderFilters> }) {
+  const filters = await searchParams;
+  const { orders, count, page } = await getOrders(filters);
+  function pageLink(value: number) { const q = new URLSearchParams({ q: filters.q || "", stage: filters.stage || "", payment: filters.payment || "", page: String(value) }); return "/admin/orders?" + q; }
+  return <main className="admin-main order-console"><header className="order-page-head"><div><p className="eyebrow">Online shop</p><h1>Orders</h1><p>Newest first. Changes sync across your open devices.</p></div></header>
+    <form className="order-search" method="get"><label className="search-wide">Search orders<input name="q" defaultValue={filters.q} placeholder="Order, customer, phone or email" maxLength={100}/></label><label>Fulfilment<select name="stage" defaultValue={filters.stage || ""}><option value="">All orders</option>{Object.entries(stageLabels).map(([key, label]) => <option key={key} value={key}>{label}</option>)}</select></label><label>Payment<select name="payment" defaultValue={filters.payment || ""}><option value="">All payments</option>{["paid", "pending", "failed", "refunded", "partially_refunded"].map(p => <option key={p} value={p}>{p.replaceAll("_", " ")}</option>)}</select></label><button>Apply filters</button></form>
+    <div className="order-section-head"><p>{count} matching {count === 1 ? "order" : "orders"}</p><Link href="/admin/orders">Clear filters</Link></div><OrderList orders={orders}/>
+    <nav className="order-pagination" aria-label="Order pages">{page > 1 ? <Link href={pageLink(page - 1)}>← Previous</Link> : <span/>}<span>Page {page} of {Math.max(1, Math.ceil(count / ORDER_PAGE_SIZE))}</span>{page * ORDER_PAGE_SIZE < count ? <Link href={pageLink(page + 1)}>Next 25 →</Link> : <span/>}</nav>
+    <p className="order-help">Prepaid PayU checkout only. COD has not been enabled or added.</p>
+  </main>;
+}

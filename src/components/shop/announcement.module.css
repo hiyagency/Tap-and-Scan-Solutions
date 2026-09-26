@@ -1,0 +1,16 @@
+.banner { display: flex; align-items: center; background: #252e23; color: #f6f7ee; min-height: 44px; }
+.viewport { flex: 1; min-width: 0; overflow: hidden; }
+.track { display: flex; width: max-content; animation: flowing 28s linear infinite; }
+.group { display: flex; flex-shrink: 0; align-items: center; justify-content: space-around; min-width: max(100vw, 900px); margin: 0; padding: 0; list-style: none; }
+.group li { display: flex; align-items: center; gap: 42px; padding: 12px 21px; white-space: nowrap; font-size: 11px; letter-spacing: .04em; }
+.group li span { color: #bccb9b; font-size: 10px; }
+.track[data-paused="true"],.banner:hover .track,.banner:focus-within .track { animation-play-state: paused; }
+.control { display: grid; place-items: center; flex-shrink: 0; width: 44px; height: 44px; border: 0; border-left: 1px solid #ffffff20; color: inherit; background: #252e23; cursor: pointer; }
+.control:focus-visible { outline-offset: -4px; }
+@keyframes flowing { to { transform: translateX(-50%); } }
+@media (prefers-reduced-motion: reduce) {
+ .track { animation: none; width: 100%; }
+ .group { min-width: 0; width: 100%; flex-wrap: wrap; justify-content: center; }
+ .group li { white-space: normal; padding: 8px 14px; font-size: 10px; }
+ .group li span,.group[aria-hidden="true"],.control { display: none; }
+}

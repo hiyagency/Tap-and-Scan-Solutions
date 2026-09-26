@@ -16,6 +16,8 @@ const getVerifiedOwner = cache(async () => {
   const email = typeof data?.claims?.email === "string" ? data.claims.email.toLowerCase() : null;
   const subject = typeof data?.claims?.sub === "string" ? data.claims.sub : null;
   if (error || email !== OWNER_EMAIL || !subject) return { configured: true as const, user: null, supabase };
+  const { data: profile, error: profileError } = await supabase.from("profiles").select("role").eq("id", subject).eq("role", "owner").maybeSingle();
+  if (profileError || !profile) return { configured: true as const, user: null, supabase };
   return { configured: true as const, user: { id: subject, email }, supabase };
 });
 
