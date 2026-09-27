@@ -1,6 +1,6 @@
 import type { ShippingSpec } from "./parcel";
 export type Variant = { id: string; name: string; image: string; video: string; price_paise: number | null; available: boolean };
-export type Product = { shipping?: ShippingSpec; slug: string; name: string; platform: string; description: string; colour: string; category: "Social" | "Reviews" | "All-in-one" | "Keychains"; kind?: "card" | "keychain"; qr?: boolean; customLogo?: boolean; active: boolean; specifications: string; materials: string; instructions: string; variants: Variant[] };
+export type Product = { stock?: number; packedWeightGrams?: number; shipping?: ShippingSpec; slug: string; name: string; platform: string; description: string; colour: string; category: "Social" | "Reviews" | "All-in-one" | "Keychains"; kind?: "card" | "keychain"; qr?: boolean; customLogo?: boolean; active: boolean; specifications: string; materials: string; instructions: string; variants: Variant[] };
 const variant = (id: string, name = "Original"): Variant => ({ id, name, image: `/shop/${id}.webp`, video: `/shop/${id}.mp4`, price_paise: 29900, available: true });
 export const catalogue: Product[] = [
  { slug:"google-reviews", name:"Google Review Card", platform:"Google", description:"Make it easy for happy customers to share their experience. A tap takes them straight to your review page.", colour:"#e8e7e2", category:"Reviews", variants:[variant("google-reviews")] },

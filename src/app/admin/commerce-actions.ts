@@ -10,6 +10,7 @@ import { catalogue } from "@/lib/shop/catalogue";
 const media = z.string().regex(/^\/shop\/[a-z0-9-]+\.(webp|png|jpg|mp4)$/);
 import { shippingSpecSchema } from "@/lib/shop/parcel";
 const productSchema = z.object({
+  packedWeightGrams: z.number().int().positive().max(30000).optional(),
   shipping: shippingSpecSchema.optional(),
   slug: z.string().regex(/^[a-z0-9-]+$/),
   name: z.string().trim().min(2).max(100),
@@ -38,6 +39,12 @@ const productSchema = z.object({
     .min(1)
     .max(20),
 });
+export async function setProductStock(slug:string,expected:number,stock:number){
+ await requireOwner();try{z.string().regex(/^[a-z0-9-]+$/).parse(slug);z.number().int().min(0).max(100000).parse(stock);z.number().int().min(0).parse(expected);
+ const {data,error}=await commerceDb().from('shop_products').update({stock,updated_at:new Date().toISOString()}).eq('slug',slug).eq('stock',expected).select('slug').maybeSingle();
+ if(error||!data)throw new Error('Stock changed or could not be saved. Refresh before trying again.');
+ revalidatePath('/');revalidatePath('/products/'+slug);revalidatePath('/admin/catalogue');return {ok:true};}catch(e){return {error:(e as Error).message};}
+}
 export async function saveProduct(input: unknown) {
   await requireOwner();
   try {

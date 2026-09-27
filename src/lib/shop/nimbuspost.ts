@@ -3,6 +3,7 @@ import { z } from "zod";
 import { parcelFor, type Parcel } from "./ithink";
 import type { Address } from "./validation";
 import { taxFor } from "./totals";
+import { PICKUP } from './pickup';
 
 const BASE = "https://api-v2.nimbuspost.com/v2/";
 async function nimbus(path: string, body?: unknown) {
@@ -32,11 +33,11 @@ export function selectRate(data: unknown, courierId?: string) {
   return { amount: rates[0].result.totalPaise, courier: rates[0].courierName, courierId: rates[0].courierId };
 }
 export async function quoteShipping(pincode: string, quantity: number, subtotal: number, configuredParcel?: Parcel) {
-  if (!/^[1-9]\d{5}$/.test(pincode) || !/^[1-9]\d{5}$/.test(process.env.NIMBUSPOST_PICKUP_PINCODE || "")) throw new Error("Shipping PIN configuration is incomplete.");
+  if (!/^[1-9]\d{5}$/.test(pincode)) throw new Error("Enter a valid delivery PIN code.");
   if (!Number.isSafeInteger(quantity) || quantity < 1) throw new Error("Invalid parcel quantity.");
   const parcel = configuredParcel ?? parcelFor(quantity);
   const data = await nimbus("serviceability", {
-    pickupPincode: process.env.NIMBUSPOST_PICKUP_PINCODE, deliveryPincode: pincode,
+    pickupPincode: PICKUP.pincode, deliveryPincode: pincode,
     paymentMode: "prepaid", orderValuePaise: subtotal + taxFor(subtotal),
     packages: [{ ...parcel, weight: Math.ceil(parcel.weight * 1000) }],
   });
@@ -45,14 +46,14 @@ export async function quoteShipping(pincode: string, quantity: number, subtotal:
 }
 export async function bookShipment(order: {reference:string; total_paise:number; shipping_paise:number; address:Address; parcel:Parcel & {courier_id?:string}}, items:{name:string;variant_id:string;quantity:number;price_paise:number}[]) {
   if (process.env.NIMBUSPOST_VERIFIED !== "true") throw new Error("NimbusPost must be verified before booking.");
-  if (!process.env.NIMBUSPOST_WAREHOUSE_ID || !order.parcel.courier_id) throw new Error("Pickup warehouse or selected courier is missing.");
+  if (!order.parcel.courier_id) throw new Error("Selected courier is missing.");
   const a = order.address;
   // Never retry automatically: an interrupted response may still have created an order.
   let data;
   try {
     data = await nimbus("shipments", {
       order_number: order.reference, order_type: "b2c", payment_mode: "prepaid",
-      warehouse_id: process.env.NIMBUSPOST_WAREHOUSE_ID, courier_id: order.parcel.courier_id,
+      warehouse_id: PICKUP.id, courier_id: order.parcel.courier_id,
       shipping_address: { name: a.name, address: a.line1, address_opt: a.line2 || "", city: a.city, state: a.state, pincode: Number(a.pincode), phone: Number(a.phone), country: "India" },
       items: items.map(i => ({ name: i.name, qty: i.quantity, price: i.price_paise / 100, sku: i.variant_id })),
       // Booking uses kilograms; serviceability uses grams.

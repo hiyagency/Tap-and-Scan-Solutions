@@ -1,7 +1,9 @@
 import type { Product } from "./catalogue";
 import type { CartItem } from "./validation";
 import { cardOffer } from "./offers";
+import { checkStock } from './inventory';
 export function priceItems(items:CartItem[],products:Product[]){
+ checkStock(items,products);
  if(new Set(items.map(i=>i.id)).size!==items.length)throw new Error("Duplicate cart items.");
  const offer=cardOffer(items,products);
  let subtotal=0,quantity=0;
