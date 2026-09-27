@@ -1,17 +1,14 @@
 import type { Metadata } from "next";
-import { Anybody, IBM_Plex_Sans } from "next/font/google";
+import "@fontsource-variable/anybody";
+import "@fontsource/ibm-plex-sans/400.css";
+import "@fontsource/ibm-plex-sans/500.css";
+import "@fontsource/ibm-plex-sans/600.css";
+import "@fontsource/ibm-plex-sans/700.css";
 import "./globals.css";
 import "./shop.css";
 import { getSiteUrl } from "@/lib/site-url";
 import { ClarityConsent } from "@/components/shop/clarity-consent";
 
-const anybody = Anybody({ variable: "--font-display", subsets: ["latin"], display: "swap" });
-const ibmPlexSans = IBM_Plex_Sans({
-  variable: "--font-body",
-  subsets: ["latin"],
-  weight: ["400", "500", "600", "700"],
-  display: "swap",
-});
 
 export const metadata: Metadata = {
   metadataBase: new URL(getSiteUrl()),
@@ -47,7 +44,7 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
-    <html lang="en-IN" className={`${anybody.variable} ${ibmPlexSans.variable}`}>
+    <html lang="en-IN" style={{ "--font-display": "'Anybody Variable'", "--font-body": "'IBM Plex Sans'" } as React.CSSProperties}>
       <body>{children}<ClarityConsent projectId={process.env.NEXT_PUBLIC_CLARITY_PROJECT_ID || "yohyb3at4h"}/></body>
     </html>
   );
