@@ -4,7 +4,7 @@ import { useState } from "react";
 import { Pause, Play } from "lucide-react";
 import styles from "./announcement.module.css";
 
-const messages = ["7-day returns", "Nationwide fast delivery", "12/6 direct support", "Limited stock! Order fast"];
+const messages = ["Buy 2 NFC cards, get 1 free · Add 3 to your bag", "15% off NFC stands when they launch", "Nationwide delivery", "12/6 direct support"];
 
 export function ShopAnnouncement() {
   const [paused, setPaused] = useState(false);

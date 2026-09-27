@@ -8,7 +8,9 @@ import { bookShipment as nimbusBook, tracking as nimbusTracking } from "@/lib/sh
 import { keychains } from "@/lib/shop/keychains";
 import { catalogue } from "@/lib/shop/catalogue";
 const media = z.string().regex(/^\/shop\/[a-z0-9-]+\.(webp|png|jpg|mp4)$/);
+import { shippingSpecSchema } from "@/lib/shop/parcel";
 const productSchema = z.object({
+  shipping: shippingSpecSchema.optional(),
   slug: z.string().regex(/^[a-z0-9-]+$/),
   name: z.string().trim().min(2).max(100),
   platform: z.string().min(1).max(40),

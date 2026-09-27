@@ -31,10 +31,10 @@ export function selectRate(data: unknown, courierId?: string) {
   if (!rates.length) throw new Error("NimbusPost shipping is unavailable for this PIN code. Contact our team.");
   return { amount: rates[0].result.totalPaise, courier: rates[0].courierName, courierId: rates[0].courierId };
 }
-export async function quoteShipping(pincode: string, quantity: number, subtotal: number) {
+export async function quoteShipping(pincode: string, quantity: number, subtotal: number, configuredParcel?: Parcel) {
   if (!/^[1-9]\d{5}$/.test(pincode) || !/^[1-9]\d{5}$/.test(process.env.NIMBUSPOST_PICKUP_PINCODE || "")) throw new Error("Shipping PIN configuration is incomplete.");
   if (!Number.isSafeInteger(quantity) || quantity < 1) throw new Error("Invalid parcel quantity.");
-  const parcel = parcelFor(quantity);
+  const parcel = configuredParcel ?? parcelFor(quantity);
   const data = await nimbus("serviceability", {
     pickupPincode: process.env.NIMBUSPOST_PICKUP_PINCODE, deliveryPincode: pincode,
     paymentMode: "prepaid", orderValuePaise: subtotal + taxFor(subtotal),

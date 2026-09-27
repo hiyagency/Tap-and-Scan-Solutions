@@ -3,6 +3,7 @@ import { Anybody, IBM_Plex_Sans } from "next/font/google";
 import "./globals.css";
 import "./shop.css";
 import { getSiteUrl } from "@/lib/site-url";
+import { ClarityConsent } from "@/components/shop/clarity-consent";
 
 const anybody = Anybody({ variable: "--font-display", subsets: ["latin"], display: "swap" });
 const ibmPlexSans = IBM_Plex_Sans({
@@ -47,7 +48,7 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html lang="en-IN" className={`${anybody.variable} ${ibmPlexSans.variable}`}>
-      <body>{children}</body>
+      <body>{children}<ClarityConsent projectId={process.env.NEXT_PUBLIC_CLARITY_PROJECT_ID || "yohyb3at4h"}/></body>
     </html>
   );
 }

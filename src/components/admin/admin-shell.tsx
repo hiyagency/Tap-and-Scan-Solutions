@@ -9,6 +9,7 @@ const links = [
   { href: "/admin", label: "Overview", icon: LayoutDashboard },
   { href: "/admin/orders", label: "Shop orders", icon: ShoppingBag },
   { href: "/admin/catalogue", label: "Catalogue", icon: Package },
+  { href: "/admin/reviews", label: "Product reviews", icon: UsersRound },
   { href: "/admin/leads", label: "Leads", icon: UserRoundPlus },
   { href: "/admin/customers", label: "Customers", icon: UsersRound },
   { href: "/admin/finances", label: "Finances", icon: CircleDollarSign },

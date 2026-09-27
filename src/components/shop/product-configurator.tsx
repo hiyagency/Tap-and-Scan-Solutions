@@ -1,4 +1,5 @@
 "use client";
+import { CartExtras,DeliveryEstimate } from "./cart-extras";
 import { useRef,useState } from "react";
 import type { CartItem } from "@/lib/shop/validation";
 import { CheckoutDialog } from "./checkout-dialog";
@@ -16,6 +17,8 @@ export function ProductConfigurator({product,products,email,enabled}:{product:Pr
  async function add(buy:boolean){setBusy(true);setError("");try{const logoId=file?crypto.randomUUID():null;if(file&&logoId)await saveLogo(logoId,file);const item={id:crypto.randomUUID(),productSlug:product.slug,variantId,quantity:qty,logoId,logoName:file?.name};if(buy){sessionStorage.setItem("nfc-buy-now",JSON.stringify([item]));sessionStorage.setItem("nfc-checkout-mode","buy");setCheckout([item]);}else{addToCart(item);setAdded(true);}}catch(e){setError(e instanceof Error?e.message:"Could not save your bag. Please retry.");}finally{setBusy(false);}}
  return <div className="product-detail"><ProductMedia key={variant.id} variant={variant} name={product.name} isKeychain={product.kind==="keychain"}/><div className="product-config"><p className="shop-eyebrow">{product.platform} / {product.qr===false?"NFC":"NFC + QR"}</p><h1>{product.name}</h1><p className="product-description">{product.description}</p><strong className="product-price">{priceLabel(variant.price_paise)}</strong>{variant.price_paise===null&&<p className="muted">Launch preview · Pricing coming soon</p>}
  {variant.price_paise!==null&&<p className="muted">List price · +18% tax. NimbusPost shipping calculated at checkout.</p>}
+ {product.shipping&&<p className="muted">Packed shipping weight: {product.shipping.weightGrams} g per item · {product.shipping.weightGrams*qty} g for this quantity. Courier charges may also depend on parcel size.</p>}
+ <div className="cart-offer"><strong>Buy 2 NFC cards, get 1 free.</strong><p>Add any 3 cards to your bag. The lowest-priced card is on us.</p><small>15% off an NFC stand when stands launch.</small></div><DeliveryEstimate/>
  {product.variants.length>1&&<fieldset className="variant-options"><legend>Choose your design</legend>{product.variants.map(v=><button type="button" key={v.id} aria-pressed={variantId===v.id} onClick={()=>{setVariant(v.id);setAdded(false);}}>{v.name}</button>)}</fieldset>}
  <div className="configuration-row"><label htmlFor="quantity">Quantity</label><input id="quantity" type="number" min={1} max={50} value={qty} onChange={e=>setQty(Math.max(1,Math.min(50,Number(e.target.value)||1)))}/></div>
  {product.customLogo!==false&&<label className="logo-upload"><Upload size={20}/><span><strong>{file?file.name:"Make it yours. Add your logo."}</strong><small>Optional · PNG only · Up to 10 MB</small></span><input aria-label="Upload your PNG logo" type="file" accept="image/png,.png" onChange={e=>chooseLogo(e.target.files?.[0])}/></label>}{file&&<button className="plain-button" onClick={()=>setFile(null)}>Remove logo</button>}
@@ -25,5 +28,6 @@ export function ProductConfigurator({product,products,email,enabled}:{product:Pr
  {added&&<p role="status">Added. <a href="/cart">View your bag →</a></p>}{!variant.available&&<p>Currently unavailable.</p>}
  <p className="product-assurance"><ShieldCheck size={17}/> {product.kind==="keychain"?"Setup confirmation before dispatch":"Design approval before production"}</p>
  {[["Technical specifications",product.specifications],["Materials",product.materials],["How to use",product.instructions]].filter(([,v])=>v).map(([title,value])=><details key={title}><summary>{title}</summary><p>{value}</p></details>)}
+ <CartExtras products={products} excluded={[product.slug]} onAdd={p=>{const v=p.variants.find(v=>v.available&&v.price_paise!==null);if(!v)return;try{addToCart({id:crypto.randomUUID(),productSlug:p.slug,variantId:v.id,quantity:1});setAdded(true);}catch(e){setError((e as Error).message);}}}/>
  </div>{product.kind!=="keychain"&&<NFCCreationProcess key={variant.id} productImage={variant.image} productName={product.name}/ >}{checkout&&<CheckoutDialog items={checkout} products={products} email={email} enabled={enabled} onClose={()=>{setCheckout(null);requestAnimationFrame(()=>buyButton.current?.focus());}}/>}</div>;
 }

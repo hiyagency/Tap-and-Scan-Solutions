@@ -20,7 +20,7 @@ describe("NimbusPost v2 integration", () => {
   it("allows quotes with payments closed", () => {
     expect(shippingReady()).toBe(true);
     expect(checkoutReady()).toBe(false);
-    vi.stubEnv("PARCEL_UNIT_WEIGHT_KG", "");
+    vi.stubEnv("NIMBUSPOST_API_KEY", "");
     expect(shippingReady()).toBe(false);
   });
   it("uses secret headers, gram weights and integer paise rates", async () => {

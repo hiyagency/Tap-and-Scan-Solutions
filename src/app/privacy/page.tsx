@@ -11,6 +11,9 @@ export default function PrivacyPage() {
       <article>
         <p className="eyebrow"><span /> Privacy</p>
         <h1>Your information, handled with care.</h1>
+        <p className="preview-note">This page provides an initial privacy summary. Our full policy will be published before live payments open.</p>
+        <h2>Optional website analytics</h2><p>If you choose to allow analytics, Microsoft Clarity helps us understand browsing interactions, such as clicks and scrolling. Analytics stays off until you agree. Checkout, account and admin pages are excluded. You can change your choice using Analytics preferences in the shop.</p>
+        <h2>Product reviews and photographs</h2><p>If you submit a review, your chosen display name, rating, review and approved photographs can appear publicly on the product page after moderation. Do not include addresses, phone numbers or other private information in reviews or photos. We use your account identifier to manage submissions and check whether a purchase is verified.</p>
         <h2>Shopping and customer accounts</h2><p>Google sign-in provides your name, email and account identifier. We use your contact details, shipping address, order details and optional PNG logo to process your order, arrange delivery and contact you on WhatsApp about design approval. PayU processes payments; we do not store your card details. NimbusPost receives the delivery information needed to quote and fulfil shipments.</p>
         <h2>Logo files and your shopping bag</h2><p>Your bag and selected logo drafts are saved in your browser until checkout. Submitted logos are stored privately and are accessible to the owner and the customer who supplied them. Temporary download links expire. Contact us to request removal of files that are no longer needed for an order.</p>
         <p>When you submit an enquiry, NFC.HIY stores the contact and project information you provide so we can respond, prepare a quotation and maintain an enquiry history.</p>
@@ -19,7 +22,7 @@ export default function PrivacyPage() {
         <h2>Storage and access</h2><p>Records are stored in the secured business database. The owner manages business records; signed-in customers can access only their own orders and submitted logos. Basic one-way technical fingerprints may be retained to reduce repeated spam submissions.</p>
         <h2>Retention</h2><p>Enquiry-only records are reviewed after 12 months and deleted or anonymised when they are no longer needed. If an enquiry becomes a customer relationship, relevant service and payment records are retained for delivery, accounting and applicable legal obligations.</p>
         <h2>Updates or removal</h2><p>To request correction or removal of an enquiry record, email <a href="mailto:hello@hiy.agency">hello@hiy.agency</a> or call <a href="tel:+919109167827">+91 9109167827</a>.</p>
-        <p className="legal-updated">Last updated: 25 September 2026</p>
+        <p className="legal-updated">Last updated: 27 September 2026</p>
       </article>
     </main>
   );
