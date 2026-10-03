@@ -3,7 +3,7 @@ export type FulfillmentStatus = "awaiting_payment" | "awaiting_design" | "design
 export type OrderItem = { id: string; name: string; variant_name: string; quantity: number; price_paise: number; image: string; asset_id: string | null };
 export type OrderEvent = { id: string; label: string; event_type: string; created_at: string; created_by: string | null };
 export type OrderAdminState = { order_id: string; read_at: string | null; notes: string; updated_at: string };
-export type OrderPayment = { txnid: string; provider_id: string | null; status: string; updated_at: string };
+export type OrderPayment = { txnid: string; provider_id: string | null; provider?: "payu" | "razorpay"; razorpay_order_id?: string | null; status: string; updated_at: string };
 export type OrderFulfilment = { awb: string | null; booking_status: string; error: string | null; label_url: string | null; tracking: { status?: string } | null };
 export type Order = {
   id: string; reference: string; user_id: string; email: string;

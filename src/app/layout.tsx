@@ -6,6 +6,7 @@ import "@fontsource/ibm-plex-sans/600.css";
 import "@fontsource/ibm-plex-sans/700.css";
 import "./globals.css";
 import "./shop.css";
+import "./premium-shop.css";
 import { getSiteUrl } from "@/lib/site-url";
 import { ClarityConsent } from "@/components/shop/clarity-consent";
 

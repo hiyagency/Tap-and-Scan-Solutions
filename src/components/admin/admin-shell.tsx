@@ -8,6 +8,7 @@ import { logoutAction } from "@/app/admin/actions";
 const links = [
   { href: "/admin", label: "Overview", icon: LayoutDashboard },
   { href: "/admin/orders", label: "Shop orders", icon: ShoppingBag },
+  { href: "/admin/abandoned-carts", label: "Abandoned carts", icon: ShoppingBag },
   { href: "/admin/catalogue", label: "Catalogue", icon: Package },
   { href: "/admin/reviews", label: "Product reviews", icon: UsersRound },
   { href: "/admin/leads", label: "Leads", icon: UserRoundPlus },

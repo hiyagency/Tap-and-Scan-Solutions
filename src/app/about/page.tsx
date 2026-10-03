@@ -24,6 +24,7 @@ import {
   Store,
   Wrench,
 } from "lucide-react";
+import { ShopShell } from "@/components/shop/shell";
 import { LeadForm } from "@/components/site/lead-form";
 import { getPublishedShipments } from "@/lib/admin-data";
 import { getSiteUrl } from "@/lib/site-url";
@@ -87,28 +88,16 @@ export default async function Home() {
     ],
   };
   return (
-    <main>
+    <ShopShell><main id="shop-main" className="about-story">
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData).replace(/</g, "\\u003c") }} />
-      <header className="site-header">
-        <Link className="brand" href="/" aria-label="NFC.HIY home">
-          <Image src="/brand/nfc-hiy.webp" alt="" width={64} height={64} priority />
-          <span><strong>NFC.HIY</strong><small>POWERED BY HIY AGENCY</small></span>
-        </Link>
-        <nav aria-label="Primary navigation">
-          <Link href="/">Shop</Link>
-          <Link href="#solutions">Solutions</Link>
-          <Link href="#technology">U2L.AI</Link>
-          <Link className="nav-cta" href="#enquire">Start a project</Link>
-        </nav>
-      </header>
-
       <section className="hero" id="top">
         <div className="hero-copy">
-          <p className="eyebrow"><span /> Custom QR · NFC · acrylic products</p>
-          <h1>Turn one <em>tap</em> into the next customer action.</h1>
+          <p className="eyebrow"><span /> BEHIND NFC.HIY · OUR WORKSHOP</p>
+          <h1>Built around your<br/><em>next connection.</em></h1>
           <p className="hero-intro">Waterproof, custom-built QR and NFC products that move people to your menu, reviews, Instagram, portfolio or private material—instantly.</p>
           <div className="hero-actions">
-            <Link className="button button-primary" href="#enquire">Get a custom setup <ArrowDown aria-hidden="true" size={18} /></Link>
+            <Link className="button button-primary" href="/#collection">Explore NFC products <ArrowRight aria-hidden="true" size={18} /></Link>
+            <Link className="text-link" href="#enquire">Need a custom setup? <ArrowDown aria-hidden="true" size={16}/></Link>
             <a className="text-link" href="tel:+919109167827">Talk to Abhigyan</a>
           </div>
           <div className="hero-proof" aria-label="Product highlights">
@@ -118,7 +107,7 @@ export default async function Home() {
         </div>
 
         <div className="hero-media">
-          <video autoPlay muted loop playsInline poster="/media/workshop-poster.jpg" aria-label="A phone tapping a custom NFC.HIY product">
+          <video controls muted playsInline preload="none" poster="/media/workshop-poster.jpg" aria-label="A phone tapping a custom NFC.HIY product">
             <source src="/media/workshop-loop.webm" type="video/webm" />
             <source src="/media/workshop-loop.mp4" type="video/mp4" />
           </video>
@@ -199,8 +188,8 @@ export default async function Home() {
               <span><strong>U2L.AI</strong><small>QR intelligence layer</small></span>
             </div>
             <p className="eyebrow"><span /> The system behind the product</p>
-            <h2>AI is already behind every scan.</h2>
-            <p>U2L.AI is not an optional styling effect added at the end. It is the default QR generation and tracking layer behind every NFC.HIY setup.</p>
+            <h2>The technology behind our smart QR.</h2>
+            <p>Our supported smart QR setups use U2L.AI for QR generation and tracking. Choose optional monthly analytics to understand how those QR codes are used.</p>
           </header>
 
           <div className="u2l-specs" aria-label="U2L.AI QR capabilities">
@@ -238,18 +227,18 @@ export default async function Home() {
         </div>
       </section>
 
-      <section className="shipments-section section-shell" id="recent-work">
+      {shipments.length > 0 && <section className="shipments-section section-shell" id="recent-work">
         <div className="section-heading split-heading">
           <div><div className="section-kicker"><span>05</span><p>Fresh from the workshop</p></div><h2>Recently<br />shipped.</h2></div>
           <p>Real completed products added by our team as orders leave the workshop.</p>
         </div>
-        {shipments.length ? <div className="shipment-public-grid">{shipments.map((shipment) => (
+        {<div className="shipment-public-grid">{shipments.map((shipment) => (
           <article key={shipment.id}>
             <div className="shipment-image-wrap"><Image src={shipment.image_url} alt={shipment.alt_text} fill sizes="(max-width: 700px) 88vw, (max-width: 1100px) 45vw, 30vw" /></div>
             <div><small>Shipped {new Date(`${shipment.shipped_on}T00:00:00`).toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" })}</small><h3>{shipment.title}</h3><p>{shipment.caption || [shipment.business_name, shipment.city].filter(Boolean).join(" · ") || "A custom NFC.HIY build."}</p></div>
           </article>
-        ))}</div> : <div className="shipment-empty"><PackageCheck aria-hidden="true" /><p>New shipment stories are being prepared. The first completed orders will appear here.</p></div>}
-      </section>
+        ))}</div>}
+      </section>}
 
       <section className="pricing-model section-shell">
         <div className="pricing-card one-time">
@@ -278,7 +267,7 @@ export default async function Home() {
 
       <section className="story-proof section-shell">
         <div className="story-media">
-          <video muted loop playsInline controls poster="/media/product-spread.jpg" aria-label="Real NFC.HIY product range footage"><source src="/media/product-loop.mp4" type="video/mp4" /></video>
+          <video muted playsInline controls preload="none" poster="/media/product-spread.jpg" aria-label="Real NFC.HIY product range footage"><source src="/media/product-loop.mp4" type="video/mp4" /></video>
           <span>Tap to see the actual range</span>
         </div>
         <div className="story-copy">
@@ -325,12 +314,6 @@ export default async function Home() {
         </div>
       </section>
 
-      <footer className="site-footer section-shell">
-        <div className="brand footer-brand"><Image src="/brand/nfc-hiy.webp" alt="" width={64} height={64} /><span><strong>NFC.HIY</strong><small>POWERED BY HIY AGENCY</small></span></div>
-        <p>U2L.AI-generated tracked QR, NFC and acrylic solutions for the moment your customer is ready to act.</p>
-        <div><a href="mailto:hello@hiy.agency">hello@hiy.agency</a><a href="/privacy">Privacy</a><a href="/admin/login">Owner login</a></div>
-        <small>© {new Date().getFullYear()} NFC.HIY · Sole proprietor Abhigyan Pandey</small>
-      </footer>
-    </main>
+    </main></ShopShell>
   );
 }

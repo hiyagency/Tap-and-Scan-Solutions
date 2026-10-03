@@ -1,9 +1,9 @@
 import type { Product } from "./catalogue";
 
-const base = { category: "Keychains" as const, kind: "keychain" as const, active: true, qr: false, customLogo: false };
-const variant = (id: string, name: string) => ({ id, name, image: `/shop/${id}-studio.webp`, video: "", price_paise: null, available: true });
+const base = { category: "Keychains" as const, kind: "keychain" as const, active: true, qr: false, customLogo: false, packedWeightGrams:250, shipping:{weightGrams:250,lengthCm:10,widthCm:10,heightCm:10} };
+const variant = (id: string, name: string) => ({ id, name, image: `/shop/${id}-studio.webp`, video: "", price_paise: 24900, available: true });
 
-// Facts paraphrased from the four user-supplied Amazon listings. Prices intentionally omitted.
+// Facts paraphrased from the four user-supplied Amazon listings; prices set by NFC.HIY.
 export const keychains: Product[] = [
   { ...base, slug: "social-profile-keychain", name: "Social Profile NFC Keychain", platform: "Social sharing", colour: "#e7e8e3",
     description: "Your profile, always within reach. Carry a compact NFC keychain that opens your chosen social profile, business page or website with a tap.",

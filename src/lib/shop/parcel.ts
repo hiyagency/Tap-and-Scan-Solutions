@@ -10,6 +10,13 @@ export const shippingSpecSchema = z.object({
 });
 export type ShippingSpec = z.infer<typeof shippingSpecSchema>;
 
+export const parcelSchema = z.object({
+  length: z.number().positive().max(150),
+  width: z.number().positive().max(150),
+  height: z.number().positive().max(150),
+  weight: z.number().positive().max(30), // kilograms for order booking
+});
+
 // Packed units are stacked upright into one parcel. Include all packaging in
 // each unit's measurements. Never accept dimensions or weights from checkout.
 export function parcelForItems(items: CartItem[], products: Product[]) {
@@ -28,5 +35,7 @@ export function parcelForItems(items: CartItem[], products: Product[]) {
     height += s.heightCm * item.quantity;
   }
   if (grams > 30000 || height > 150) throw new Error("This order needs a custom shipping quote. Please contact our team.");
-  return { length, width, height: Math.round(height * 100) / 100, weight: grams / 1000 };
+  // Round upward so decimal measurements never understate the parcel size.
+  const cm = (value: number) => Math.ceil(Number((value * 100).toFixed(6))) / 100;
+  return { length: cm(length), width: cm(width), height: cm(height), weight: grams / 1000 };
 }

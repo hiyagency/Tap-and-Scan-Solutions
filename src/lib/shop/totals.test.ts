@@ -2,7 +2,8 @@ import { describe, it, expect, vi } from "vitest";
 vi.mock("server-only", () => ({}));
 import { orderTotals, taxFor } from "./totals";
 import { selectRate } from "./nimbuspost";
-import { catalogue } from "./catalogue";
+import { catalogue, standee } from "./catalogue";
+import { parcelForItems } from "./parcel";
 describe("Card pricing and tax", () => {
   it("prices all eight card variants at 299 rupees", () => {
     expect(catalogue.flatMap(p => p.variants)).toHaveLength(8);
@@ -14,6 +15,12 @@ describe("Card pricing and tax", () => {
     expect(taxFor(101)).toBe(18);
     expect(() => orderTotals(29900,-1)).toThrow();
     expect(() => taxFor(NaN)).toThrow();
+  });
+  it("lists the standee at 1299 rupees before GST with its confirmed outer parcel", () => {
+    expect(standee.variants[0].price_paise).toBe(129900);
+    expect(standee.stock).toBe(10);
+    expect(orderTotals(129900,5000)).toEqual({subtotal:129900,tax:23382,shipping:5000,total:158282});
+    expect(parcelForItems([{id:"s",productSlug:standee.slug,variantId:standee.variants[0].id,quantity:1}], [standee])).toEqual({length:18,width:13,height:5,weight:0.65});
   });
 });
 describe("NimbusPost rates", () => {

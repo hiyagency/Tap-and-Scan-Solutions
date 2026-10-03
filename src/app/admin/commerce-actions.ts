@@ -6,7 +6,7 @@ import { commerceDb } from "@/lib/shop/server";
 import { bookShipment as legacyBook, shipmentLabel, tracking as legacyTracking } from "@/lib/shop/ithink";
 import { bookShipment as nimbusBook, tracking as nimbusTracking } from "@/lib/shop/nimbuspost";
 import { keychains } from "@/lib/shop/keychains";
-import { catalogue } from "@/lib/shop/catalogue";
+import { catalogue, standee } from "@/lib/shop/catalogue";
 const media = z.string().regex(/^\/shop\/[a-z0-9-]+\.(webp|png|jpg|mp4)$/);
 import { shippingSpecSchema } from "@/lib/shop/parcel";
 const productSchema = z.object({
@@ -17,8 +17,8 @@ const productSchema = z.object({
   platform: z.string().min(1).max(40),
   description: z.string().trim().min(1).max(1500),
   colour: z.string().regex(/^#[a-f0-9]{6}$/i),
-  category: z.enum(["Social", "Reviews", "All-in-one", "Keychains"]),
-  kind: z.enum(["card", "keychain"]).optional(),
+  category: z.enum(["Social", "Reviews", "All-in-one", "Keychains", "Standees"]),
+  kind: z.enum(["card", "keychain", "standee"]).optional(),
   qr: z.boolean().optional(),
   customLogo: z.boolean().optional(),
   active: z.boolean(),
@@ -61,10 +61,10 @@ export async function saveProduct(input: unknown) {
         "Catalogue is not configured yet. Apply the commerce migration and seed first.",
       );
     if (!saved) {
-      const index = keychains.findIndex(p => p.slug === data.slug);
+      const index = [standee,...keychains].findIndex(p => p.slug === data.slug);
       if (index < 0) throw new Error("Product not found. Refresh the catalogue.");
       const { error: insertError } = await db.from("shop_products").insert({
-        slug: data.slug, position: catalogue.length + index, data,
+        slug: data.slug, position: data.slug===standee.slug ? -1 : catalogue.length + index, data,
       });
       if (insertError) throw new Error("Could not save this product. Refresh and retry.");
     }

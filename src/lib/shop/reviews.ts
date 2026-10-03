@@ -1,6 +1,18 @@
 import "server-only";
 import { commerceDb } from "./server";
 export type PublicReview={id:string;display_name:string;rating:number;body:string;verified_purchase:boolean;created_at:string;photos:string[]};
+export type FeaturedReview=Pick<PublicReview,"id"|"display_name"|"rating"|"body"|"verified_purchase"> & {product_slug:string};
+export async function featuredReviews(slugs:string[]):Promise<FeaturedReview[]>{
+ if(!slugs.length)return [];
+ try{
+  const {data,error}=await commerceDb().from("shop_reviews")
+   .select("id,display_name,rating,body,verified_purchase,product_slug")
+   .eq("status","approved").in("product_slug",slugs)
+   .order("created_at",{ascending:false}).limit(3)
+   .abortSignal(AbortSignal.timeout(2500));
+  return error?[]:(data??[]) as FeaturedReview[];
+ }catch{return [];}
+}
 export async function productReviews(slug:string):Promise<{reviews:PublicReview[];available:boolean}>{
  try{
   const db=commerceDb();

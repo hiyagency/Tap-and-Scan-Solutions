@@ -5,5 +5,24 @@ import { priceLabel } from "@/lib/shop/catalogue";
 import { RefreshOrder } from "@/components/shop/refresh-order";
 export const metadata={title:"Order details",robots:{index:false,follow:false}};
 export default async function OrderPage({params}:{params:Promise<{id:string}>}){const user=await customerSession();if(!user)redirect("/account/login");const {id}=await params;const order=await ownedOrder(id,user.id);if(!order)notFound();const shipment=Array.isArray(order.shop_fulfilments)?order.shop_fulfilments[0]:order.shop_fulfilments;
- return <ShopShell><main id="shop-main" className="shop-page"><p className="shop-eyebrow">YOUR ORDER</p><h1 className="shop-page-title">{order.reference}</h1><div className="cart-layout"><div><p>Payment: {order.payment_status.replaceAll("_"," ")} · {priceLabel(order.total_paise)}</p>{order.shop_order_items.map((i:{id:string;name:string;variant_name:string;quantity:number;asset_id:string|null})=><article className="account-order" key={i.id}><h2>{i.name}</h2><p>{i.variant_name} · Quantity {i.quantity}</p>{i.asset_id&&<a href={"/api/shop/assets/"+i.asset_id}>Download your logo</a>}</article>)}<h2>Order progress</h2><ol className="order-timeline">{order.shop_order_events.map((e:{id:string;label:string;created_at:string})=><li key={e.id}>{e.label}<br/><small>{new Date(e.created_at).toLocaleString("en-IN")}</small></li>)}</ol></div><aside className="order-summary"><h2>Order total</h2><div><span>Products</span><strong>{priceLabel(order.subtotal_paise)}</strong></div><div><span>Tax</span><strong>{priceLabel(order.tax_paise||0)}</strong></div><div><span>Shipping</span><strong>{priceLabel(order.shipping_paise)}</strong></div><div><span>Total</span><strong>{priceLabel(order.total_paise)}</strong></div><h2>Delivery updates</h2><p>{shipment?.awb?"Tracking number: "+shipment.awb:"Tracking will appear once your approved design is produced and shipped."}</p>{shipment?.tracking&&<><p>{shipment.tracking.status}</p><p>Expected: {shipment.tracking.expected||"Awaiting carrier update"}</p><p>Last checked: {new Date(shipment.checked_at).toLocaleString("en-IN")}</p></>}<RefreshOrder id={id} paid={order.payment_status!=="pending"} shipped={!!shipment?.awb}/><p>Need help? <a href="https://wa.me/919109167827">Message our team</a></p></aside></div></main></ShopShell>;
+ return <ShopShell><main id="shop-main" className="shop-page">
+  <p className="shop-eyebrow">YOUR ORDER</p>
+  <h1 className="shop-page-title">{order.reference}</h1>
+  {order.cancelled_at&&<section className="account-error order-cancellation" aria-labelledby="cancelled-order-title" role="status">
+   <h2 id="cancelled-order-title">Order cancelled</h2>
+   {order.cancellation_reason&&<p>{order.cancellation_reason}</p>}
+   <p>This order will not be fulfilled. Payment and refund status are tracked separately; cancellation alone does not confirm a refund.</p>
+   <a className="shop-button" href={"https://wa.me/919109167827?text="+encodeURIComponent("Hi NFC.HIY, I need help with the payment or refund for my cancelled order "+order.reference+".")} target="_blank" rel="noreferrer">Contact support</a>
+  </section>}
+  <div className="cart-layout"><div>
+   <p>Payment: {order.payment_status.replaceAll("_"," ")} · {priceLabel(order.total_paise)}</p>
+   {order.shop_order_items.map((i:{id:string;name:string;variant_name:string;quantity:number;asset_id:string|null})=><article className="account-order" key={i.id}><h2>{i.name}</h2><p>{i.variant_name} · Quantity {i.quantity}</p>{i.asset_id&&<a href={"/api/shop/assets/"+i.asset_id}>Download your logo</a>}</article>)}
+   <h2>Order progress</h2><ol className="order-timeline">{order.shop_order_events.map((e:{id:string;label:string;created_at:string})=><li key={e.id}>{e.label}<br/><small>{new Date(e.created_at).toLocaleString("en-IN")}</small></li>)}</ol>
+  </div><aside className="order-summary"><h2>Order total</h2>
+   <div><span>Products</span><strong>{priceLabel(order.subtotal_paise)}</strong></div><div><span>Tax</span><strong>{priceLabel(order.tax_paise||0)}</strong></div><div><span>Shipping</span><strong>{priceLabel(order.shipping_paise)}</strong></div><div><span>Total</span><strong>{priceLabel(order.total_paise)}</strong></div>
+   <h2>Delivery updates</h2><p>{shipment?.awb?"Tracking number: "+shipment.awb:order.cancelled_at?"Shipping is blocked for this cancelled order.":"Tracking will appear once your approved design is produced and shipped."}</p>
+   {shipment?.tracking&&<><p>{shipment.tracking.status}</p><p>Expected: {shipment.tracking.expected||"Awaiting carrier update"}</p><p>Last checked: {new Date(shipment.checked_at).toLocaleString("en-IN")}</p></>}
+   <RefreshOrder id={id} paid={order.payment_status!=="pending"} shipped={!!shipment?.awb}/><p>Need help? <a href="https://wa.me/919109167827">Message our team</a></p>
+  </aside></div>
+ </main></ShopShell>;
 }

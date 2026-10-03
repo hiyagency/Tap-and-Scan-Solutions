@@ -1,0 +1,2 @@
+import { shopFaq, visibleShopFaq } from "@/lib/shop/faq";
+export function FAQAccordion({questions}:{questions?:number[]}={}){const entries=questions?shopFaq.filter((_,index)=>questions.includes(index)):visibleShopFaq;return <div className="premium-faq-list">{entries.map(([question,answer])=><details key={question}><summary>{question}<span aria-hidden="true">+</span></summary><p>{answer}</p></details>)}</div>;}

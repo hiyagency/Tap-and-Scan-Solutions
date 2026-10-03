@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { useEffect, useId, useRef, useState } from "react";
+import { useId, useState } from "react";
 import styles from "./nfc-creation-process.module.css";
 
 const steps = [
@@ -29,20 +29,8 @@ function CardStage({ step, productImage, productName }: { step: number; productI
 
 export function NFCCreationProcess({ productImage, productName }: { productImage: string; productName: string }) {
   const [active, setActive] = useState(0);
-  const section = useRef<HTMLElement>(null);
   const id = useId();
-  useEffect(() => {
-    const root = section.current;
-    if (!root || !("IntersectionObserver" in window)) return;
-    const observer = new IntersectionObserver(entries => {
-      entries.forEach(entry => {
-        if (entry.isIntersecting) { entry.target.setAttribute("data-visible", "true"); observer.unobserve(entry.target); }
-      });
-    }, { threshold: 0.25 });
-    root.querySelectorAll("[data-process-step]").forEach(node => observer.observe(node));
-    return () => observer.disconnect();
-  }, []);
-  return <section ref={section} className={styles.process} aria-labelledby={id}>
+  return <section className={styles.process} aria-labelledby={id}>
     <header className={styles.heading}><p className="shop-eyebrow">THE MAKING OF YOUR CARD</p><h2 id={id}>How Your NFC Card Is Made</h2><p>From a blank NFC card to your personalized design — see how we create your card.</p></header>
     <div className={styles.sequence}>
       <div className={styles.desktopVisual}>
@@ -51,12 +39,10 @@ export function NFCCreationProcess({ productImage, productName }: { productImage
       </div>
       <ol className={styles.steps} aria-label="Card creation steps">
         {steps.map((step, index) => <li key={step.title} className={styles.step} data-process-step data-active={index === active}>
-          <div className={styles.mobileVisual}><CardStage step={index} productImage={productImage} productName={productName}/></div>
           <div className={styles.stepText}><span className={styles.number}>{String(index + 1).padStart(2, "0")}</span><div><h3>{step.title}</h3><p>{step.description}</p><button type="button" className={styles.stepButton} aria-pressed={active === index} onClick={() => setActive(index)} aria-label={`Show step ${index + 1}: ${step.title}`}>{active === index ? "Viewing this step" : "View this step"}<span aria-hidden="true"> ↗</span></button></div></div>
         </li>)}
       </ol>
     </div>
-    <p className={styles.mobileCaption}>Layer illustration · Product artwork preview. Your final layout is confirmed before production.</p>
     <div className={styles.details}><div><p className="shop-eyebrow">NFC SMART CARD</p><h2>Product Details</h2></div><ul>{details.map(detail => <li key={detail}>{detail}</li>)}</ul></div>
     <div className={styles.trust}><h3>Made For Everyday Use</h3><p>Each NFC card is individually prepared, customized and checked before dispatch.</p></div>
   </section>;
